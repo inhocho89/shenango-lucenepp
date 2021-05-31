@@ -1,0 +1,53 @@
+project(helloworld)
+
+
+####################################
+# src
+####################################
+file(GLOB_RECURSE helloworld_sources
+  "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
+
+file(GLOB_RECURSE demo_headers
+  "${helloworld_SOURCE_DIR}/../include/*.h")
+
+
+####################################
+# create executable target
+####################################
+add_executable(helloworld
+  ${helloworld_sources})
+
+
+####################################
+# include directories
+####################################
+target_include_directories(helloworld
+  PRIVATE
+    $<BUILD_INTERFACE:${lucene++_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:${lucene++_SOURCE_DIR}/include/lucene++>
+    ${Boost_INCLUDE_DIRS}
+    ${Shenango_INCLUDE_DIRS}
+    ${Breakwater_INCLUDE_DIRS})
+
+
+####################################
+# dependencies
+####################################
+target_link_libraries(helloworld
+  PRIVATE
+    Boost::boost
+    Boost::date_time
+    Boost::filesystem
+    Boost::iostreams
+    Boost::regex
+    Boost::system
+    Boost::thread
+    ZLIB::ZLIB
+    lucene++::lucene++
+    lucene++::lucene++-contrib
+    ${Shenango_RUNTIME_LIBS}
+    ${Breakwater_LIBS})
+
+set_target_properties(helloworld
+  PROPERTIES
+    LINK_FLAGS "-T ${Shenango_PATH}/base/base.ld")
