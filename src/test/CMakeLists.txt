@@ -46,7 +46,9 @@ target_include_directories(lucene++-tester
     $<BUILD_INTERFACE:${lucene++_BINARY_DIR}/include>
     $<BUILD_INTERFACE:${core_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${contrib_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    ${Shenango_INCLUDE_DIRS}
+    ${Breakwater_INCLUDE_DIRS})
 
 
 ####################################
@@ -64,9 +66,10 @@ target_link_libraries(lucene++-tester
     ZLIB::ZLIB
     gtest_main
     gtest
-    
     lucene++::lucene++
-    lucene++::lucene++-contrib)
+    lucene++::lucene++-contrib
+    ${Shenango_RUNTIME_LIBS}
+    ${Breakwater_LIBS})
 
 
 ####################################
@@ -75,3 +78,7 @@ target_link_libraries(lucene++-tester
 target_compile_options(lucene++-tester PRIVATE -DLPP_EXPOSE_INTERNAL)
 
 cotire(lucene++-tester)
+
+set_target_properties(lucene++-tester
+  PROPERTIES
+    LINK_FLAGS "-T ${Shenango_PATH}/base/base.ld")

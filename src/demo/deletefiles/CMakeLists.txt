@@ -25,7 +25,9 @@ target_include_directories(deletefiles
   PRIVATE
     $<BUILD_INTERFACE:${lucene++_BINARY_DIR}/include>
     $<BUILD_INTERFACE:${lucene++_SOURCE_DIR}/include/lucene++>
-    ${Boost_INCLUDE_DIRS})
+    ${Boost_INCLUDE_DIRS}
+    ${Shenango_INCLUDE_DIRS}
+    ${Breakwater_INCLUDE_DIRS})
 
 
 ####################################
@@ -42,4 +44,10 @@ target_link_libraries(deletefiles
     Boost::thread
     ZLIB::ZLIB
     lucene++::lucene++
-    lucene++::lucene++-contrib)
+    lucene++::lucene++-contrib
+    ${Shenango_RUNTIME_LIBS}
+    ${Breakwater_LIBS})
+
+set_target_properties(deletefiles
+  PROPERTIES
+    LINK_FLAGS "-T ${Shenango_PATH}/base/base.ld")

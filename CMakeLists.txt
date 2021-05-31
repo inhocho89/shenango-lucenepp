@@ -50,6 +50,32 @@ include(Lucene++Docs)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Shenango repositories
+set(Shenango_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../shenango")
+set(Shenango_RUNTIME_LIBS
+  "${Shenango_PATH}/libruntime.a"
+  "${Shenango_PATH}/libnet.a"
+  "${Shenango_PATH}/libbase.a"
+  "${Shenango_PATH}/bindings/cc/librt++.a"
+  "-L ${Shenango_PATH}/rdma-core/build/lib/statics"
+  "-lmlx5"
+  "-libverbs"
+  "-lnl-3"
+  "-lnl-route-3"
+  "-lnuma")
+set(Shenango_INCLUDE_DIRS
+  "${Shenango_PATH}/inc"
+  "${Shenango_PATH}/rdma-core/build/include"
+  "${Shenango_PATH}/bindings/")
+set(Breakwater_LIBS
+  "${Shenango_PATH}/breakwater/libbw.a"
+  "${Shenango_PATH}/breakwater/bindings/cc/libbw++.a")
+set(Breakwater_INCLUDE_DIRS
+  "${Shenango_PATH}/breakwater/inc"
+  "${Shenango_PATH}/breakwater/bindings/cc/inc")
+
+set(COMMON_BUILD_FLAGS "-g -Wall -D_GNU_SOURCE -DNDEBUG -O3 -mssse3 -DMLX5 -DDIRECT_PATH")
+
 ####################################
 # platform specific options
 ####################################
@@ -69,10 +95,6 @@ add_definitions(-DWIN32_LEAN_AND_MEAN)
 
 # Disable the min/max macros that conflict with std::min/std::max
 add_definitions(-DNOMINMAX)
-endif()
-
-if(NOT WIN32 AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
-  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 if(CYGWIN)

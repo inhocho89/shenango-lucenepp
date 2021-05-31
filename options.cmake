@@ -7,7 +7,7 @@
 
 option(LUCENE_BUILD_SHARED
 "Build shared library"
-ON
+OFF
 )
 
 option(ENABLE_PACKAGING

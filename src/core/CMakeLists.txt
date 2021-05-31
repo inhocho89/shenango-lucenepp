@@ -44,7 +44,9 @@ target_include_directories(lucene++
     $<BUILD_INTERFACE:${lucene++_BINARY_DIR}/include>
     $<BUILD_INTERFACE:${lucene++_SOURCE_DIR}/include/lucene++>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    ${Boost_INCLUDE_DIRS})
+    ${Boost_INCLUDE_DIRS}
+    ${Shenango_INCLUDE_DIRS}
+    ${Breakwater_INCLUDE_DIRS})
 
 
 
@@ -60,7 +62,8 @@ target_link_libraries(lucene++
     Boost::system
     Boost::thread
     ZLIB::ZLIB
-)
+    ${Shenango_RUNTIME_LIBS}
+    ${Breakwater_LIBS})
 
 if(WIN32)
     target_link_libraries(lucene++ ws2_32)
@@ -76,6 +79,7 @@ set_target_properties(lucene++
     COTIRE_CXX_PREFIX_HEADER_INIT "include/LuceneInc.h"
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN 1
+    COMPILE_FLAGS ${COMMON_BUILD_FLAGS}
     VERSION ${lucene++_VERSION}
     SOVERSION ${lucene++_SOVERSION})
 
@@ -84,4 +88,5 @@ cotire(lucene++)
 
 install(TARGETS lucene++
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   COMPONENT runtime)
