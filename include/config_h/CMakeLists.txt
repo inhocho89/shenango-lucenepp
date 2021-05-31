@@ -1,12 +1,6 @@
 #################################
 # set Config.h vars
 #################################
-if(ENABLE_BOOST_INTEGER)
-  set(USE_BOOST_INTEGER "define")
-else()
-  set(USE_BOOST_INTEGER "undef")
-endif()
-
 if(ENABLE_CYCLIC_CHECK)
   set(USE_CYCLIC_CHECK "define")
 else()

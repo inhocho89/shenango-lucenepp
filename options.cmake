@@ -20,11 +20,6 @@ option(LUCENE_USE_STATIC_BOOST_LIBS
 OFF
 )
 
-option(ENABLE_BOOST_INTEGER
-"Enable boost integer types"
-OFF
-)
-
 option(ENABLE_CYCLIC_CHECK
 "Enable cyclic checking"
 OFF

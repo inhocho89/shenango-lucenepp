@@ -18,25 +18,12 @@
 #include <limits>
 #include <stdexcept>
 
-#ifdef LPP_USE_BOOST_INTEGER
-#include <boost/cstdint.hpp>
-#endif
+#include <sys/types.h>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-
-#ifdef LPP_USE_BOOST_INTEGER
-using boost::int8_t;
-using boost::uint8_t;
-using boost::int16_t;
-using boost::uint16_t;
-using boost::int32_t;
-using boost::uint32_t;
-using boost::int64_t;
-using boost::uint64_t;
-#endif
 
 #define SIZEOF_ARRAY(arr) (sizeof(arr) / sizeof((arr)[0]))
 
