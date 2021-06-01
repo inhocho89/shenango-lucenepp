@@ -169,7 +169,7 @@ void checkCompressedFields29(const DirectoryPtr& dir, bool shouldStillBeCompress
         ReaderUtil::gatherSubReaders(readers, reader);
 
         for (Collection<IndexReaderPtr>::iterator ir = readers.begin(); ir != readers.end(); ++ir) {
-            FieldsReaderPtr fr = boost::dynamic_pointer_cast<SegmentReader>(*ir)->getFieldsReader();
+            FieldsReaderPtr fr = std::dynamic_pointer_cast<SegmentReader>(*ir)->getFieldsReader();
             // for a 2.9 index, FieldsReader.canReadRawDocs() must be false and other way round for a trunk index
             EXPECT_NE(shouldStillBeCompressed, fr->canReadRawDocs());
         }
@@ -263,19 +263,19 @@ static void searchIndex(const String& dirName, const String& oldName) {
                     int32_t numFields = boost::starts_with(oldName, L"29.") ? 7 : 5;
                     EXPECT_EQ(numFields, fields.size());
 
-                    FieldPtr f = boost::dynamic_pointer_cast<Field>(d->getField(L"id"));
+                    FieldPtr f = std::dynamic_pointer_cast<Field>(d->getField(L"id"));
                     EXPECT_EQ(StringUtils::toString(i), f->stringValue());
 
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(L"utf8"));
+                    f = std::dynamic_pointer_cast<Field>(d->getField(L"utf8"));
                     EXPECT_EQ(UTF8_TO_STRING(utf8Field), f->stringValue());
 
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(L"autf8"));
+                    f = std::dynamic_pointer_cast<Field>(d->getField(L"autf8"));
                     EXPECT_EQ(UTF8_TO_STRING(utf8Field), f->stringValue());
 
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(L"content2"));
+                    f = std::dynamic_pointer_cast<Field>(d->getField(L"content2"));
                     EXPECT_EQ(L"here is more content with aaa aaa aaa", f->stringValue());
 
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(UTF8_TO_STRING(utf8Field2)));
+                    f = std::dynamic_pointer_cast<Field>(d->getField(UTF8_TO_STRING(utf8Field2)));
                     EXPECT_EQ(L"field with non-ascii name", f->stringValue());
                 }
             }

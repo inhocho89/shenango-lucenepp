@@ -58,9 +58,9 @@ Collection<WeightedTermPtr> QueryTermExtractor::getTerms(const QueryPtr& query, 
 void QueryTermExtractor::getTerms(const QueryPtr& query, SetWeightedTerm terms, bool prohibited, const String& fieldName) {
     try {
         if (MiscUtils::typeOf<BooleanQuery>(query)) {
-            getTermsFromBooleanQuery(boost::dynamic_pointer_cast<BooleanQuery>(query), terms, prohibited, fieldName);
+            getTermsFromBooleanQuery(std::dynamic_pointer_cast<BooleanQuery>(query), terms, prohibited, fieldName);
         } else if (MiscUtils::typeOf<FilteredQuery>(query)) {
-            getTermsFromFilteredQuery(boost::dynamic_pointer_cast<FilteredQuery>(query), terms, prohibited, fieldName);
+            getTermsFromFilteredQuery(std::dynamic_pointer_cast<FilteredQuery>(query), terms, prohibited, fieldName);
         } else {
             SetTerm nonWeightedTerms(SetTerm::newInstance());
             query->extractTerms(nonWeightedTerms);

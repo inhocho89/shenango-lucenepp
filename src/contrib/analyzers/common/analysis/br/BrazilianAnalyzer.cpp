@@ -80,7 +80,7 @@ TokenStreamPtr BrazilianAnalyzer::tokenStream(const String& fieldName, const Rea
 }
 
 TokenStreamPtr BrazilianAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    BrazilianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<BrazilianAnalyzerSavedStreams>(getPreviousTokenStream()));
+    BrazilianAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<BrazilianAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<BrazilianAnalyzerSavedStreams>();
         streams->source = newLucene<StandardTokenizer>(matchVersion, reader);

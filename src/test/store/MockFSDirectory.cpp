@@ -29,7 +29,7 @@ IndexInputPtr MockFSDirectory::openInput(const String& name) {
 
 void MockFSDirectory::tweakBufferSizes() {
     for (Collection<IndexInputPtr>::iterator ii = allIndexInputs.begin(); ii != allIndexInputs.end(); ++ii) {
-        BufferedIndexInputPtr bii(boost::dynamic_pointer_cast<BufferedIndexInput>(*ii));
+        BufferedIndexInputPtr bii(std::dynamic_pointer_cast<BufferedIndexInput>(*ii));
         int32_t bufferSize = 1024 + (int32_t)std::abs(rand->nextInt() % 32768);
         bii->setBufferSize(bufferSize);
     }

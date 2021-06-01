@@ -123,7 +123,7 @@ TEST_F(SegmentMergerTest, testMerge) {
     Collection<int32_t> freqs = vector->getTermFrequencies();
     EXPECT_TRUE(freqs);
 
-    EXPECT_TRUE(boost::dynamic_pointer_cast<TermPositionVector>(vector));
+    EXPECT_TRUE(std::dynamic_pointer_cast<TermPositionVector>(vector));
 
     for (int32_t i = 0; i < terms.size(); ++i) {
         String term = terms[i];

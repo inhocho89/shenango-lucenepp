@@ -153,7 +153,7 @@ void CheckHits::checkHitCollector(const QueryPtr& query, const String& defaultFi
 
     for (int32_t i = -1; i < 2; ++i) {
         actual.clear();
-        QueryUtils::wrapUnderlyingReader(boost::dynamic_pointer_cast<IndexSearcher>(searcher), i)->search(query, c);
+        QueryUtils::wrapUnderlyingReader(std::dynamic_pointer_cast<IndexSearcher>(searcher), i)->search(query, c);
         EXPECT_TRUE(correct.equals(actual));
     }
 }

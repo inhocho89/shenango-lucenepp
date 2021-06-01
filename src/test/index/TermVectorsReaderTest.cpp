@@ -269,7 +269,7 @@ TEST_F(TermVectorsReaderTest, testReader) {
 TEST_F(TermVectorsReaderTest, testPositionReader) {
     TermVectorsReaderPtr reader = newLucene<TermVectorsReader>(dir, seg, fieldInfos);
     EXPECT_TRUE(reader);
-    TermPositionVectorPtr vector = boost::dynamic_pointer_cast<TermPositionVector>(reader->get(0, testFields[0]));
+    TermPositionVectorPtr vector = std::dynamic_pointer_cast<TermPositionVector>(reader->get(0, testFields[0]));
     EXPECT_TRUE(vector);
     Collection<String> terms = vector->getTerms();
     EXPECT_TRUE(terms);
@@ -294,7 +294,7 @@ TEST_F(TermVectorsReaderTest, testPositionReader) {
 
     TermFreqVectorPtr freqVector = reader->get(0, testFields[1]); // no pos, no offset
     EXPECT_TRUE(freqVector);
-    EXPECT_TRUE(boost::dynamic_pointer_cast<SegmentTermVector>(freqVector));
+    EXPECT_TRUE(std::dynamic_pointer_cast<SegmentTermVector>(freqVector));
     terms = freqVector->getTerms();
     EXPECT_TRUE(terms);
     EXPECT_EQ(terms.size(), testTerms.size());
@@ -306,7 +306,7 @@ TEST_F(TermVectorsReaderTest, testPositionReader) {
 TEST_F(TermVectorsReaderTest, testOffsetReader) {
     TermVectorsReaderPtr reader = newLucene<TermVectorsReader>(dir, seg, fieldInfos);
     EXPECT_TRUE(reader);
-    TermPositionVectorPtr vector = boost::dynamic_pointer_cast<TermPositionVector>(reader->get(0, testFields[0]));
+    TermPositionVectorPtr vector = std::dynamic_pointer_cast<TermPositionVector>(reader->get(0, testFields[0]));
     EXPECT_TRUE(vector);
     Collection<String> terms = vector->getTerms();
     EXPECT_TRUE(terms);

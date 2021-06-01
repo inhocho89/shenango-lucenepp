@@ -43,7 +43,7 @@ void MockRAMInputStream::close() {
 
 LuceneObjectPtr MockRAMInputStream::clone(const LuceneObjectPtr& other) {
     LuceneObjectPtr clone = RAMInputStream::clone(other ? other : newLucene<MockRAMInputStream>());
-    MockRAMInputStreamPtr cloneInputStream(boost::dynamic_pointer_cast<MockRAMInputStream>(clone));
+    MockRAMInputStreamPtr cloneInputStream(std::dynamic_pointer_cast<MockRAMInputStream>(clone));
     cloneInputStream->_dir = _dir;
     cloneInputStream->name = name;
     cloneInputStream->isClone = true;

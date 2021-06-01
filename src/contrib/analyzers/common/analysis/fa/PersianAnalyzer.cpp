@@ -225,7 +225,7 @@ TokenStreamPtr PersianAnalyzer::tokenStream(const String& fieldName, const Reade
 }
 
 TokenStreamPtr PersianAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    PersianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<PersianAnalyzerSavedStreams>(getPreviousTokenStream()));
+    PersianAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<PersianAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<PersianAnalyzerSavedStreams>();
         streams->source = newLucene<ArabicLetterTokenizer>(reader);

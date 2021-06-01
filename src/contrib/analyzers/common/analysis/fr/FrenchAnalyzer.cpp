@@ -83,7 +83,7 @@ TokenStreamPtr FrenchAnalyzer::tokenStream(const String& fieldName, const Reader
 }
 
 TokenStreamPtr FrenchAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    FrenchAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<FrenchAnalyzerSavedStreams>(getPreviousTokenStream()));
+    FrenchAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<FrenchAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<FrenchAnalyzerSavedStreams>();
         streams->source = newLucene<StandardTokenizer>(matchVersion, reader);

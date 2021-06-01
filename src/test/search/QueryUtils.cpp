@@ -51,10 +51,10 @@ public:
 };
 
 void QueryUtils::checkHashEquals(const QueryPtr& q) {
-    QueryPtr q2 = boost::dynamic_pointer_cast<Query>(q->clone());
+    QueryPtr q2 = std::dynamic_pointer_cast<Query>(q->clone());
     checkEqual(q, q2);
 
-    QueryPtr q3 = boost::dynamic_pointer_cast<Query>(q->clone());
+    QueryPtr q3 = std::dynamic_pointer_cast<Query>(q->clone());
     q3->setBoost(7.21792348);
     checkUnequal(q, q3);
 
@@ -89,7 +89,7 @@ void QueryUtils::check(const QueryPtr& q1, const SearcherPtr& s) {
 void QueryUtils::check(const QueryPtr& q1, const SearcherPtr& s, bool wrap) {
     check(q1);
     if (s) {
-        IndexSearcherPtr is = boost::dynamic_pointer_cast<IndexSearcher>(s);
+        IndexSearcherPtr is = std::dynamic_pointer_cast<IndexSearcher>(s);
         if (is) {
             checkFirstSkipTo(q1, is);
             checkSkipTo(q1, is);
@@ -106,7 +106,7 @@ void QueryUtils::check(const QueryPtr& q1, const SearcherPtr& s, bool wrap) {
         }
         checkExplanations(q1, s);
 
-        QueryPtr q2 = boost::dynamic_pointer_cast<Query>(q1->clone());
+        QueryPtr q2 = std::dynamic_pointer_cast<Query>(q1->clone());
         checkEqual(s->rewrite(q1), s->rewrite(q2));
     }
 }

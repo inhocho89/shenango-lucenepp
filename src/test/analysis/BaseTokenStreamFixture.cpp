@@ -38,7 +38,7 @@ bool CheckClearAttributesAttribute::equals(const LuceneObjectPtr& other) {
         return true;
     }
 
-    CheckClearAttributesAttributePtr otherAttribute(boost::dynamic_pointer_cast<CheckClearAttributesAttribute>(other));
+    CheckClearAttributesAttributePtr otherAttribute(std::dynamic_pointer_cast<CheckClearAttributesAttribute>(other));
     if (otherAttribute) {
         return (otherAttribute->clearCalled == clearCalled);
     }
@@ -51,13 +51,13 @@ int32_t CheckClearAttributesAttribute::hashCode() {
 }
 
 void CheckClearAttributesAttribute::copyTo(const AttributePtr& target) {
-    CheckClearAttributesAttributePtr clearAttribute(boost::dynamic_pointer_cast<CheckClearAttributesAttribute>(target));
+    CheckClearAttributesAttributePtr clearAttribute(std::dynamic_pointer_cast<CheckClearAttributesAttribute>(target));
     clearAttribute->clear();
 }
 
 LuceneObjectPtr CheckClearAttributesAttribute::clone(const LuceneObjectPtr& other) {
     LuceneObjectPtr clone = other ? other : newLucene<CheckClearAttributesAttribute>();
-    CheckClearAttributesAttributePtr cloneAttribute(boost::dynamic_pointer_cast<CheckClearAttributesAttribute>(Attribute::clone(clone)));
+    CheckClearAttributesAttributePtr cloneAttribute(std::dynamic_pointer_cast<CheckClearAttributesAttribute>(Attribute::clone(clone)));
     cloneAttribute->clearCalled = clearCalled;
     return cloneAttribute;
 }

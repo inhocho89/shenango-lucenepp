@@ -47,7 +47,7 @@ TokenStreamPtr CJKAnalyzer::tokenStream(const String& fieldName, const ReaderPtr
 }
 
 TokenStreamPtr CJKAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    CJKAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<CJKAnalyzerSavedStreams>(getPreviousTokenStream()));
+    CJKAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<CJKAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<CJKAnalyzerSavedStreams>();
         streams->source = newLucene<CJKTokenizer>(reader);

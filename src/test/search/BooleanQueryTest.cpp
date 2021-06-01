@@ -71,7 +71,7 @@ TEST_F(BooleanQueryTest, testNullOrSubScorer) {
     double score2 = s->search(q, 10)->getMaxScore();
     EXPECT_NEAR(score * 0.5, score2, 1e-6);
 
-    BooleanQueryPtr qq = boost::dynamic_pointer_cast<BooleanQuery>(q->clone());
+    BooleanQueryPtr qq = std::dynamic_pointer_cast<BooleanQuery>(q->clone());
     PhraseQueryPtr phrase = newLucene<PhraseQuery>();
     phrase->add(newLucene<Term>(L"field", L"not_in_index"));
     phrase->add(newLucene<Term>(L"field", L"another_not_in_index"));

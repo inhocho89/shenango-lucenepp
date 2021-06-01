@@ -66,7 +66,7 @@ public:
     }
 
     LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr()) {
-        return newLucene<SeeksCountingStream>(boost::dynamic_pointer_cast<IndexInput>(input->clone()));
+        return newLucene<SeeksCountingStream>(std::dynamic_pointer_cast<IndexInput>(input->clone()));
     }
 };
 

@@ -40,7 +40,7 @@ TokenStreamPtr SnowballAnalyzer::tokenStream(const String& fieldName, const Read
 }
 
 TokenStreamPtr SnowballAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    SnowballAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<SnowballAnalyzerSavedStreams>(getPreviousTokenStream()));
+    SnowballAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<SnowballAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<SnowballAnalyzerSavedStreams>();
         streams->source = newLucene<StandardTokenizer>(matchVersion, reader);

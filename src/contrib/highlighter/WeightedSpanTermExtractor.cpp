@@ -55,14 +55,14 @@ void WeightedSpanTermExtractor::closeReaders() {
 void WeightedSpanTermExtractor::extract(const QueryPtr& query, const MapWeightedSpanTermPtr& terms) {
     QueryPtr _query(query);
     if (MiscUtils::typeOf<BooleanQuery>(_query)) {
-        Collection<BooleanClausePtr> queryClauses(boost::dynamic_pointer_cast<BooleanQuery>(_query)->getClauses());
+        Collection<BooleanClausePtr> queryClauses(std::dynamic_pointer_cast<BooleanQuery>(_query)->getClauses());
         for (int32_t i = 0; i < queryClauses.size(); ++i) {
             if (!queryClauses[i]->isProhibited()) {
                 extract(queryClauses[i]->getQuery(), terms);
             }
         }
     } else if (MiscUtils::typeOf<PhraseQuery>(_query)) {
-        PhraseQueryPtr phraseQuery(boost::dynamic_pointer_cast<PhraseQuery>(_query));
+        PhraseQueryPtr phraseQuery(std::dynamic_pointer_cast<PhraseQuery>(_query));
         Collection<TermPtr> phraseQueryTerms(phraseQuery->getTerms());
         Collection<SpanQueryPtr> clauses(Collection<SpanQueryPtr>::newInstance(phraseQueryTerms.size()));
         for (int32_t i = 0; i < phraseQueryTerms.size(); ++i) {
@@ -86,18 +86,18 @@ void WeightedSpanTermExtractor::extract(const QueryPtr& query, const MapWeighted
     } else if (MiscUtils::typeOf<TermQuery>(_query)) {
         extractWeightedTerms(terms, _query);
     } else if (MiscUtils::typeOf<SpanQuery>(_query)) {
-        extractWeightedSpanTerms(terms, boost::dynamic_pointer_cast<SpanQuery>(_query));
+        extractWeightedSpanTerms(terms, std::dynamic_pointer_cast<SpanQuery>(_query));
     } else if (MiscUtils::typeOf<FilteredQuery>(_query)) {
-        extract(boost::dynamic_pointer_cast<FilteredQuery>(_query)->getQuery(), terms);
+        extract(std::dynamic_pointer_cast<FilteredQuery>(_query)->getQuery(), terms);
     } else if (MiscUtils::typeOf<DisjunctionMaxQuery>(_query)) {
-        DisjunctionMaxQueryPtr dmq(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(_query));
+        DisjunctionMaxQueryPtr dmq(std::dynamic_pointer_cast<DisjunctionMaxQuery>(_query));
         for (Collection<QueryPtr>::iterator q = dmq->begin(); q != dmq->end(); ++q) {
             extract(*q, terms);
         }
     } else if (MiscUtils::typeOf<MultiTermQuery>(_query) && expandMultiTermQuery) {
-        MultiTermQueryPtr mtq(boost::dynamic_pointer_cast<MultiTermQuery>(_query));
+        MultiTermQueryPtr mtq(std::dynamic_pointer_cast<MultiTermQuery>(_query));
         if (mtq->getRewriteMethod() != MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE()) {
-            mtq = boost::dynamic_pointer_cast<MultiTermQuery>(mtq->clone());
+            mtq = std::dynamic_pointer_cast<MultiTermQuery>(mtq->clone());
             mtq->setRewriteMethod(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE());
             _query = mtq;
         }
@@ -108,7 +108,7 @@ void WeightedSpanTermExtractor::extract(const QueryPtr& query, const MapWeighted
             extract(_query->rewrite(ir), terms);
         }
     } else if (MiscUtils::typeOf<MultiPhraseQuery>(_query)) {
-        MultiPhraseQueryPtr mpq(boost::dynamic_pointer_cast<MultiPhraseQuery>(_query));
+        MultiPhraseQueryPtr mpq(std::dynamic_pointer_cast<MultiPhraseQuery>(_query));
         Collection< Collection<TermPtr> > termArrays(mpq->getTermArrays());
         Collection<int32_t> positions(mpq->getPositions());
         if (!positions.empty()) {
@@ -174,7 +174,7 @@ void WeightedSpanTermExtractor::extractWeightedSpanTerms(const MapWeightedSpanTe
     bool rewriteQuery = mustRewriteQuery(spanQuery);
     if (rewriteQuery) {
         for (HashSet<String>::iterator field = fieldNames.begin(); field != fieldNames.end(); ++field) {
-            SpanQueryPtr rewrittenQuery(boost::dynamic_pointer_cast<SpanQuery>(spanQuery->rewrite(getReaderForField(*field))));
+            SpanQueryPtr rewrittenQuery(std::dynamic_pointer_cast<SpanQuery>(spanQuery->rewrite(getReaderForField(*field))));
             queries.put(*field, rewrittenQuery);
             rewrittenQuery->extractTerms(nonWeightedTerms);
         }
@@ -313,18 +313,18 @@ MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTermsWithScores
 
 void WeightedSpanTermExtractor::collectSpanQueryFields(const SpanQueryPtr& spanQuery, HashSet<String> fieldNames) {
     if (MiscUtils::typeOf<FieldMaskingSpanQuery>(spanQuery)) {
-        collectSpanQueryFields(boost::dynamic_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery(), fieldNames);
+        collectSpanQueryFields(std::dynamic_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery(), fieldNames);
     } else if (MiscUtils::typeOf<SpanFirstQuery>(spanQuery)) {
-        collectSpanQueryFields(boost::dynamic_pointer_cast<SpanFirstQuery>(spanQuery)->getMatch(), fieldNames);
+        collectSpanQueryFields(std::dynamic_pointer_cast<SpanFirstQuery>(spanQuery)->getMatch(), fieldNames);
     } else if (MiscUtils::typeOf<SpanNearQuery>(spanQuery)) {
-        Collection<SpanQueryPtr> clauses(boost::dynamic_pointer_cast<SpanNearQuery>(spanQuery)->getClauses());
+        Collection<SpanQueryPtr> clauses(std::dynamic_pointer_cast<SpanNearQuery>(spanQuery)->getClauses());
         for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause) {
             collectSpanQueryFields(*clause, fieldNames);
         }
     } else if (MiscUtils::typeOf<SpanNotQuery>(spanQuery)) {
-        collectSpanQueryFields(boost::dynamic_pointer_cast<SpanNotQuery>(spanQuery)->getInclude(), fieldNames);
+        collectSpanQueryFields(std::dynamic_pointer_cast<SpanNotQuery>(spanQuery)->getInclude(), fieldNames);
     } else if (MiscUtils::typeOf<SpanOrQuery>(spanQuery)) {
-        Collection<SpanQueryPtr> clauses(boost::dynamic_pointer_cast<SpanOrQuery>(spanQuery)->getClauses());
+        Collection<SpanQueryPtr> clauses(std::dynamic_pointer_cast<SpanOrQuery>(spanQuery)->getClauses());
         for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause) {
             collectSpanQueryFields(*clause, fieldNames);
         }
@@ -337,11 +337,11 @@ bool WeightedSpanTermExtractor::mustRewriteQuery(const SpanQueryPtr& spanQuery) 
     if (!expandMultiTermQuery) {
         return false;    // Will throw UnsupportedOperationException in case of a SpanRegexQuery.
     } else if (MiscUtils::typeOf<FieldMaskingSpanQuery>(spanQuery)) {
-        return mustRewriteQuery(boost::dynamic_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery());
+        return mustRewriteQuery(std::dynamic_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery());
     } else if (MiscUtils::typeOf<SpanFirstQuery>(spanQuery)) {
-        return mustRewriteQuery(boost::dynamic_pointer_cast<SpanFirstQuery>(spanQuery)->getMatch());
+        return mustRewriteQuery(std::dynamic_pointer_cast<SpanFirstQuery>(spanQuery)->getMatch());
     } else if (MiscUtils::typeOf<SpanNearQuery>(spanQuery)) {
-        Collection<SpanQueryPtr> clauses(boost::dynamic_pointer_cast<SpanNearQuery>(spanQuery)->getClauses());
+        Collection<SpanQueryPtr> clauses(std::dynamic_pointer_cast<SpanNearQuery>(spanQuery)->getClauses());
         for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause) {
             if (mustRewriteQuery(*clause)) {
                 return true;
@@ -349,10 +349,10 @@ bool WeightedSpanTermExtractor::mustRewriteQuery(const SpanQueryPtr& spanQuery) 
         }
         return false;
     } else if (MiscUtils::typeOf<SpanNotQuery>(spanQuery)) {
-        SpanNotQueryPtr spanNotQuery(boost::dynamic_pointer_cast<SpanNotQuery>(spanQuery));
+        SpanNotQueryPtr spanNotQuery(std::dynamic_pointer_cast<SpanNotQuery>(spanQuery));
         return mustRewriteQuery(spanNotQuery->getInclude()) || mustRewriteQuery(spanNotQuery->getExclude());
     } else if (MiscUtils::typeOf<SpanOrQuery>(spanQuery)) {
-        Collection<SpanQueryPtr> clauses(boost::dynamic_pointer_cast<SpanOrQuery>(spanQuery)->getClauses());
+        Collection<SpanQueryPtr> clauses(std::dynamic_pointer_cast<SpanOrQuery>(spanQuery)->getClauses());
         for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause) {
             if (mustRewriteQuery(*clause)) {
                 return true;

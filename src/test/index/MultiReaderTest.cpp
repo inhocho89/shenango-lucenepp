@@ -81,7 +81,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
 
-        if (boost::dynamic_pointer_cast<MultiReader>(reader)) {
+        if (std::dynamic_pointer_cast<MultiReader>(reader)) {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
         }
@@ -95,7 +95,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
 
-        if (boost::dynamic_pointer_cast<MultiReader>(reader)) {
+        if (std::dynamic_pointer_cast<MultiReader>(reader)) {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
         }

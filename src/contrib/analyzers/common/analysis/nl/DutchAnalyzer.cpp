@@ -77,7 +77,7 @@ TokenStreamPtr DutchAnalyzer::tokenStream(const String& fieldName, const ReaderP
 }
 
 TokenStreamPtr DutchAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    DutchAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<DutchAnalyzerSavedStreams>(getPreviousTokenStream()));
+    DutchAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<DutchAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<DutchAnalyzerSavedStreams>();
         streams->source = newLucene<StandardTokenizer>(matchVersion, reader);

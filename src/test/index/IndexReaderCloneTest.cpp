@@ -97,7 +97,7 @@ static bool deleteWorked(int32_t doc, const IndexReaderPtr& r) {
 static void performDefaultTests(const IndexReaderPtr& r1) {
     double norm1 = Similarity::decodeNorm(r1->norms(L"field1")[4]);
 
-    IndexReaderPtr pr1Clone = boost::dynamic_pointer_cast<IndexReader>(r1->clone());
+    IndexReaderPtr pr1Clone = std::dynamic_pointer_cast<IndexReader>(r1->clone());
     pr1Clone->deleteDocument(10);
     pr1Clone->setNorm(4, L"field1", 0.5);
     EXPECT_TRUE(Similarity::decodeNorm(r1->norms(L"field1")[4]) == norm1);
@@ -175,7 +175,7 @@ TEST_F(IndexReaderCloneTest, testCloneReadOnlySegmentReader) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     IndexReaderPtr reader = IndexReader::open(dir1, false);
-    IndexReaderPtr readOnlyReader = boost::dynamic_pointer_cast<IndexReader>(reader->clone(true));
+    IndexReaderPtr readOnlyReader = std::dynamic_pointer_cast<IndexReader>(reader->clone(true));
     EXPECT_TRUE(isReadOnly(readOnlyReader));
     EXPECT_TRUE(!deleteWorked(1, readOnlyReader));
     reader->close();
@@ -188,7 +188,7 @@ TEST_F(IndexReaderCloneTest, testCloneNoChangesStillReadOnly) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r1->clone(false));
+    IndexReaderPtr r2 = std::dynamic_pointer_cast<IndexReader>(r1->clone(false));
     EXPECT_TRUE(deleteWorked(1, r2));
     r1->close();
     r2->close();
@@ -200,7 +200,7 @@ TEST_F(IndexReaderCloneTest, testCloneWriteToOrig) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r1->clone(false));
+    IndexReaderPtr r2 = std::dynamic_pointer_cast<IndexReader>(r1->clone(false));
     EXPECT_TRUE(deleteWorked(1, r1));
     r1->close();
     r2->close();
@@ -212,7 +212,7 @@ TEST_F(IndexReaderCloneTest, testCloneWriteToClone) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r1->clone(false));
+    IndexReaderPtr r2 = std::dynamic_pointer_cast<IndexReader>(r1->clone(false));
     EXPECT_TRUE(deleteWorked(1, r2));
     // should fail because reader1 holds the write lock
     EXPECT_TRUE(!deleteWorked(1, r1));
@@ -246,7 +246,7 @@ TEST_F(IndexReaderCloneTest, testCloneWriteableToReadOnly) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr reader = IndexReader::open(dir1, false);
-    IndexReaderPtr readOnlyReader = boost::dynamic_pointer_cast<IndexReader>(reader->clone(true));
+    IndexReaderPtr readOnlyReader = std::dynamic_pointer_cast<IndexReader>(reader->clone(true));
 
     EXPECT_TRUE(isReadOnly(readOnlyReader));
     EXPECT_TRUE(!deleteWorked(1, readOnlyReader));
@@ -280,7 +280,7 @@ TEST_F(IndexReaderCloneTest, testCloneReadOnlyToWriteable) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr reader1 = IndexReader::open(dir1, true);
-    IndexReaderPtr reader2 = boost::dynamic_pointer_cast<IndexReader>(reader1->clone(false));
+    IndexReaderPtr reader2 = std::dynamic_pointer_cast<IndexReader>(reader1->clone(false));
 
     EXPECT_TRUE(!isReadOnly(reader2));
     EXPECT_TRUE(!deleteWorked(1, reader1));
@@ -300,7 +300,7 @@ TEST_F(IndexReaderCloneTest, testReadOnlyCloneAfterOptimize) {
     IndexWriterPtr w = newLucene<IndexWriter>(dir1, newLucene<SimpleAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     w->optimize();
     w->close();
-    IndexReaderPtr reader2 = boost::dynamic_pointer_cast<IndexReader>(reader1->clone(true));
+    IndexReaderPtr reader2 = std::dynamic_pointer_cast<IndexReader>(reader1->clone(true));
     EXPECT_TRUE(isReadOnly(reader2));
     reader1->close();
     reader2->close();
@@ -311,7 +311,7 @@ TEST_F(IndexReaderCloneTest, testCloneReadOnlyDirectoryReader) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr reader = IndexReader::open(dir1, false);
-    IndexReaderPtr readOnlyReader = boost::dynamic_pointer_cast<IndexReader>(reader->clone(true));
+    IndexReaderPtr readOnlyReader = std::dynamic_pointer_cast<IndexReader>(reader->clone(true));
     EXPECT_TRUE(isReadOnly(readOnlyReader));
     reader->close();
     readOnlyReader->close();
@@ -374,7 +374,7 @@ TEST_F(IndexReaderCloneTest, testSegmentReaderCloseReferencing) {
     origSegmentReader->deleteDocument(1);
     origSegmentReader->setNorm(4, L"field1", 0.5);
 
-    SegmentReaderPtr clonedSegmentReader = boost::dynamic_pointer_cast<SegmentReader>(origSegmentReader->clone());
+    SegmentReaderPtr clonedSegmentReader = std::dynamic_pointer_cast<SegmentReader>(origSegmentReader->clone());
     checkDelDocsRefCountEquals(2, origSegmentReader);
     origSegmentReader->close();
     checkDelDocsRefCountEquals(1, origSegmentReader);
@@ -398,7 +398,7 @@ TEST_F(IndexReaderCloneTest, testSegmentReaderDelDocsReferenceCounting) {
     checkDelDocsRefCountEquals(1, origSegmentReader);
 
     // the cloned segmentreader should have 2 references, 1 to itself, and 1 to the original segmentreader
-    IndexReaderPtr clonedReader = boost::dynamic_pointer_cast<IndexReader>(origReader->clone());
+    IndexReaderPtr clonedReader = std::dynamic_pointer_cast<IndexReader>(origReader->clone());
     SegmentReaderPtr clonedSegmentReader = SegmentReader::getOnlySegmentReader(clonedReader);
     checkDelDocsRefCountEquals(2, origSegmentReader);
     // deleting a document creates a new deletedDocs bitvector, the refs goes to 1
@@ -427,7 +427,7 @@ TEST_F(IndexReaderCloneTest, testSegmentReaderDelDocsReferenceCounting) {
 
     // test a reopened reader
     IndexReaderPtr reopenedReader = clonedReader->reopen();
-    IndexReaderPtr cloneReader2 = boost::dynamic_pointer_cast<IndexReader>(reopenedReader->clone());
+    IndexReaderPtr cloneReader2 = std::dynamic_pointer_cast<IndexReader>(reopenedReader->clone());
     SegmentReaderPtr cloneSegmentReader2 = SegmentReader::getOnlySegmentReader(cloneReader2);
     checkDelDocsRefCountEquals(2, cloneSegmentReader2);
     clonedReader->close();
@@ -443,7 +443,7 @@ TEST_F(IndexReaderCloneTest, testCloneWithDeletes) {
     IndexReaderPtr origReader = IndexReader::open(dir1, false);
     origReader->deleteDocument(1);
 
-    IndexReaderPtr clonedReader = boost::dynamic_pointer_cast<IndexReader>(origReader->clone());
+    IndexReaderPtr clonedReader = std::dynamic_pointer_cast<IndexReader>(origReader->clone());
     origReader->close();
     clonedReader->close();
 
@@ -462,7 +462,7 @@ TEST_F(IndexReaderCloneTest, testCloneWithSetNorm) {
     EXPECT_EQ(encoded, orig->norms(L"field1")[1]);
 
     // the cloned segmentreader should have 2 references, 1 to itself, and 1 to the original segmentreader
-    IndexReaderPtr clonedReader = boost::dynamic_pointer_cast<IndexReader>(orig->clone());
+    IndexReaderPtr clonedReader = std::dynamic_pointer_cast<IndexReader>(orig->clone());
     orig->close();
     clonedReader->close();
 
@@ -483,7 +483,7 @@ TEST_F(IndexReaderCloneTest, testCloneSubreaders) {
 
     Collection<IndexReaderPtr> clones = Collection<IndexReaderPtr>::newInstance(subs.size());
     for (int32_t x = 0; x < subs.size(); ++x) {
-        clones[x] = boost::dynamic_pointer_cast<IndexReader>(subs[x]->clone());
+        clones[x] = std::dynamic_pointer_cast<IndexReader>(subs[x]->clone());
     }
     reader->close();
     for (int32_t x = 0; x < subs.size(); ++x) {
@@ -497,7 +497,7 @@ TEST_F(IndexReaderCloneTest, testIncDecRef) {
     createIndex(dir1, false);
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
     r1->incRef();
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r1->clone(false));
+    IndexReaderPtr r2 = std::dynamic_pointer_cast<IndexReader>(r1->clone(false));
     r1->deleteDocument(5);
     r1->decRef();
 
@@ -518,7 +518,7 @@ TEST_F(IndexReaderCloneTest, testCloseStoredFields) {
     w->addDocument(doc);
     w->close();
     IndexReaderPtr r1 = IndexReader::open(dir, false);
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r1->clone(false));
+    IndexReaderPtr r2 = std::dynamic_pointer_cast<IndexReader>(r1->clone(false));
     r1->close();
     r2->close();
     dir->close();

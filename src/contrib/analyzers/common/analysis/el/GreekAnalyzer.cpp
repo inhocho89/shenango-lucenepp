@@ -89,7 +89,7 @@ TokenStreamPtr GreekAnalyzer::tokenStream(const String& fieldName, const ReaderP
 }
 
 TokenStreamPtr GreekAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    GreekAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<GreekAnalyzerSavedStreams>(getPreviousTokenStream()));
+    GreekAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<GreekAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<GreekAnalyzerSavedStreams>();
         streams->source = newLucene<StandardTokenizer>(matchVersion, reader);

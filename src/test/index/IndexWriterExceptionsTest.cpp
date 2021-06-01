@@ -143,7 +143,7 @@ public:
 TEST_F(IndexWriterExceptionsTest, testRandomExceptions) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
+    std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
 
     writer->setRAMBufferSizeMB(0.1);
 
@@ -175,7 +175,7 @@ TEST_F(IndexWriterExceptionsTest, testRandomExceptions) {
 TEST_F(IndexWriterExceptionsTest, testRandomExceptionsThreads) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
+    std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
 
     writer->setRAMBufferSizeMB(0.2);
 

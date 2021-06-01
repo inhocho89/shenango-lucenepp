@@ -559,7 +559,7 @@ TEST_F(IndexWriterReaderTest, testMergeWarmer) {
         writer->addDocument(createDocument(i, L"test", 4));
     }
 
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     EXPECT_TRUE(warmer->warmCount > 0);
     int32_t count = warmer->warmCount;
@@ -591,7 +591,7 @@ TEST_F(IndexWriterReaderTest, testAfterCommit) {
         writer->addDocument(createDocument(i, L"test", 4));
     }
 
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     IndexReaderPtr r2 = r1->reopen();
     if (r2 != r1) {

@@ -431,7 +431,7 @@ RunAddIndexesThreads::RunAddIndexesThreads(int32_t numCopy) {
 
     dir2 = newLucene<MockRAMDirectory>();
     writer2 = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    cms = boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer2->getMergeScheduler());
+    cms = std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer2->getMergeScheduler());
 
     readers = Collection<IndexReaderPtr>::newInstance(NUM_COPY);
     for (int32_t i = 0; i < NUM_COPY; ++i) {
@@ -612,9 +612,9 @@ TEST_F(IndexWriterTest, testAddIndexOnDiskFull) {
                     // This test intentionally produces exceptions in the threads that CMS launches; we don't
                     // want to pollute test output with these.
                     if (x == 0) {
-                        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->setSuppressExceptions();
+                        std::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->setSuppressExceptions();
                     } else {
-                        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->clearSuppressExceptions();
+                        std::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->clearSuppressExceptions();
                     }
                 }
 
@@ -777,7 +777,7 @@ TEST_F(IndexWriterTest, testAddDocumentOnDiskFull) {
 
             MergeSchedulerPtr ms = writer->getMergeScheduler();
             if (MiscUtils::typeOf<ConcurrentMergeScheduler>(ms)) {
-                boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->setSuppressExceptions();
+                std::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->setSuppressExceptions();
             }
 
             bool hitError = false;
@@ -947,7 +947,7 @@ TEST_F(IndexWriterTest, testOptimizeMaxNumSegments2) {
         writer->commit();
 
         sis = newLucene<SegmentInfos>();
-        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+        std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
         sis->read(dir);
         int32_t optSegCount = sis->size();
 
@@ -3239,7 +3239,7 @@ TEST_F(IndexWriterTest, testExceptionOnMergeInit) {
             break;
         }
     }
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
     EXPECT_TRUE(writer->failed);
     writer->close();
     dir->close();
@@ -3889,7 +3889,7 @@ TEST_F(IndexWriterTest, testOptimizeExceptions) {
     for (int32_t i = 0; i < 200; ++i) {
         MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>(startDir);
         writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
-        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
+        std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
         dir->setRandomIOExceptionRate(0.5, 100);
 
         try {
@@ -3961,7 +3961,7 @@ TEST_F(IndexWriterTest, testDoubleOffsetCounting) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     // Token "" occurred once
     EXPECT_EQ(1, termOffsets.size());
@@ -3969,7 +3969,7 @@ TEST_F(IndexWriterTest, testDoubleOffsetCounting) {
     EXPECT_EQ(8, termOffsets[0]->getEndOffset());
 
     // Token "abcd" occurred three times
-    termOffsets = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(1);
+    termOffsets = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(1);
     EXPECT_EQ(3, termOffsets.size());
     EXPECT_EQ(0, termOffsets[0]->getStartOffset());
     EXPECT_EQ(4, termOffsets[0]->getEndOffset());
@@ -3992,7 +3992,7 @@ TEST_F(IndexWriterTest, testDoubleOffsetCounting2) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
     EXPECT_EQ(2, termOffsets.size());
     EXPECT_EQ(0, termOffsets[0]->getStartOffset());
     EXPECT_EQ(4, termOffsets[0]->getEndOffset());
@@ -4013,7 +4013,7 @@ TEST_F(IndexWriterTest, testEndOffsetPositionCharAnalyzer) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     EXPECT_EQ(2, termOffsets.size());
     EXPECT_EQ(0, termOffsets[0]->getStartOffset());
@@ -4037,7 +4037,7 @@ TEST_F(IndexWriterTest, testEndOffsetPositionWithCachingTokenFilter) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     EXPECT_EQ(2, termOffsets.size());
     EXPECT_EQ(0, termOffsets[0]->getStartOffset());
@@ -4063,7 +4063,7 @@ TEST_F(IndexWriterTest, testEndOffsetPositionWithTeeSinkTokenFilter) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     EXPECT_EQ(2, termOffsets.size());
     EXPECT_EQ(0, termOffsets[0]->getStartOffset());
@@ -4085,7 +4085,7 @@ TEST_F(IndexWriterTest, testEndOffsetPositionStopFilter) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     EXPECT_EQ(2, termOffsets.size());
     EXPECT_EQ(0, termOffsets[0]->getStartOffset());
@@ -4108,7 +4108,7 @@ TEST_F(IndexWriterTest, testEndOffsetPositionStandard) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    TermPositionVectorPtr tpv = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
+    TermPositionVectorPtr tpv = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
     Collection<TermVectorOffsetInfoPtr> termOffsets = tpv->getOffsets(0);
 
     EXPECT_EQ(1, termOffsets.size());
@@ -4136,7 +4136,7 @@ TEST_F(IndexWriterTest, testEndOffsetPositionStandardEmptyField) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    TermPositionVectorPtr tpv = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
+    TermPositionVectorPtr tpv = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
     Collection<TermVectorOffsetInfoPtr> termOffsets = tpv->getOffsets(0);
 
     EXPECT_EQ(1, termOffsets.size());
@@ -4162,7 +4162,7 @@ TEST_F(IndexWriterTest, testEndOffsetPositionStandardEmptyField2) {
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    TermPositionVectorPtr tpv = boost::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
+    TermPositionVectorPtr tpv = std::dynamic_pointer_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
     Collection<TermVectorOffsetInfoPtr> termOffsets = tpv->getOffsets(0);
 
     EXPECT_EQ(1, termOffsets.size());
@@ -4221,7 +4221,7 @@ TEST_F(IndexWriterTest, testDeadlock) {
     writer2->close();
 
     IndexReaderPtr r1 = IndexReader::open(dir2, true);
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r1->clone());
+    IndexReaderPtr r2 = std::dynamic_pointer_cast<IndexReader>(r1->clone());
 
     writer->addIndexes(newCollection<IndexReaderPtr>(r1, r2));
     writer->close();
@@ -4466,7 +4466,7 @@ TEST_F(IndexWriterTest, testCorruptionAfterDiskFullDuringMerge) {
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     w->setMergeScheduler(newLucene<SerialMergeScheduler>());
 
-    boost::dynamic_pointer_cast<LogMergePolicy>(w->getMergePolicy())->setMergeFactor(2);
+    std::dynamic_pointer_cast<LogMergePolicy>(w->getMergePolicy())->setMergeFactor(2);
 
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"f", L"doctor who", Field::STORE_YES, Field::INDEX_ANALYZED));

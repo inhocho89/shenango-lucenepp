@@ -48,7 +48,7 @@ protected:
             for (int32_t i = pq->size(); i > 1; --i) {
                 pq->pop();
             }
-            maxScore = boost::dynamic_pointer_cast<ScoreDoc>(pq->pop())->score;
+            maxScore = std::dynamic_pointer_cast<ScoreDoc>(pq->pop())->score;
         }
         return newLucene<TopDocs>(totalHits, results, maxScore);
     }

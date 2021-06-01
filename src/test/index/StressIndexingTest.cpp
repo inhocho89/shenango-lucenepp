@@ -565,10 +565,10 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
             EXPECT_EQ(terms1[j], terms2[j]);
             EXPECT_EQ(freq1[j], freq2[j]);
         }
-        if (boost::dynamic_pointer_cast<SegmentTermPositionVector>(v1)) {
-            EXPECT_TRUE(boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2));
-            SegmentTermPositionVectorPtr tpv1 = boost::dynamic_pointer_cast<SegmentTermPositionVector>(v1);
-            SegmentTermPositionVectorPtr tpv2 = boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2);
+        if (std::dynamic_pointer_cast<SegmentTermPositionVector>(v1)) {
+            EXPECT_TRUE(std::dynamic_pointer_cast<SegmentTermPositionVector>(v2));
+            SegmentTermPositionVectorPtr tpv1 = std::dynamic_pointer_cast<SegmentTermPositionVector>(v1);
+            SegmentTermPositionVectorPtr tpv2 = std::dynamic_pointer_cast<SegmentTermPositionVector>(v2);
             for (int32_t j = 0; j < numTerms; ++j) {
                 Collection<int32_t> pos1 = tpv1->getTermPositions(j);
                 Collection<int32_t> pos2 = tpv2->getTermPositions(j);

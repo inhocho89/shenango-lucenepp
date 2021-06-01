@@ -14,7 +14,7 @@ using namespace Lucene;
 typedef LuceneTestFixture TermAttributeTest;
 
 static AttributePtr checkCloneIsEqual(const AttributePtr& att) {
-    AttributePtr clone = boost::dynamic_pointer_cast<Attribute>(att->clone());
+    AttributePtr clone = std::dynamic_pointer_cast<Attribute>(att->clone());
     EXPECT_TRUE(att->equals(clone));
     EXPECT_EQ(att->hashCode(), clone->hashCode());
     return clone;
@@ -107,7 +107,7 @@ TEST_F(TermAttributeTest, testClone) {
     TermAttributePtr t = newLucene<TermAttribute>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    TermAttributePtr clone = boost::dynamic_pointer_cast<TermAttribute>(checkCloneIsEqual(t));
+    TermAttributePtr clone = std::dynamic_pointer_cast<TermAttribute>(checkCloneIsEqual(t));
     EXPECT_EQ(t->term(), clone->term());
     EXPECT_TRUE(buf != clone->termBuffer());
 }
@@ -126,14 +126,14 @@ TEST_F(TermAttributeTest, testEquals) {
 
 TEST_F(TermAttributeTest, testCopyTo) {
     TermAttributePtr t = newLucene<TermAttribute>();
-    TermAttributePtr copy = boost::dynamic_pointer_cast<TermAttribute>(checkCopyIsEqual<TermAttribute>(t));
+    TermAttributePtr copy = std::dynamic_pointer_cast<TermAttribute>(checkCopyIsEqual<TermAttribute>(t));
     EXPECT_EQ(L"", t->term());
     EXPECT_EQ(L"", copy->term());
 
     t = newLucene<TermAttribute>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    copy = boost::dynamic_pointer_cast<TermAttribute>(checkCopyIsEqual<TermAttribute>(t));
+    copy = std::dynamic_pointer_cast<TermAttribute>(checkCopyIsEqual<TermAttribute>(t));
     EXPECT_EQ(t->term(), copy->term());
     EXPECT_TRUE(buf != copy->termBuffer());
 }

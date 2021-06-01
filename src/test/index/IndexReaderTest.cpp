@@ -1306,7 +1306,7 @@ TEST_F(IndexReaderTest, testFieldCacheReuseAfterClone) {
     EXPECT_EQ(17, ints[0]);
 
     // Clone reader
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r->clone());
+    IndexReaderPtr r2 = std::dynamic_pointer_cast<IndexReader>(r->clone());
     r->close();
     EXPECT_NE(r2, r);
     Collection<int32_t> ints2 = FieldCache::DEFAULT()->getInts(r2, L"number");
@@ -1361,7 +1361,7 @@ TEST_F(IndexReaderTest, testReopenChangeReadonly) {
 
     // Open reader1
     IndexReaderPtr r = IndexReader::open(dir, false);
-    EXPECT_TRUE(boost::dynamic_pointer_cast<DirectoryReader>(r));
+    EXPECT_TRUE(std::dynamic_pointer_cast<DirectoryReader>(r));
     IndexReaderPtr r1 = SegmentReader::getOnlySegmentReader(r);
     Collection<int32_t> ints = FieldCache::DEFAULT()->getInts(r1, L"number");
     EXPECT_EQ(1, ints.size());
@@ -1369,7 +1369,7 @@ TEST_F(IndexReaderTest, testReopenChangeReadonly) {
 
     // Reopen to readonly with no chnages
     IndexReaderPtr r3 = r->reopen(true);
-    EXPECT_TRUE(boost::dynamic_pointer_cast<ReadOnlyDirectoryReader>(r3));
+    EXPECT_TRUE(std::dynamic_pointer_cast<ReadOnlyDirectoryReader>(r3));
     r3->close();
 
     // Add new segment
@@ -1379,13 +1379,13 @@ TEST_F(IndexReaderTest, testReopenChangeReadonly) {
     // Reopen reader1 --> reader2
     IndexReaderPtr r2 = r->reopen(true);
     r->close();
-    EXPECT_TRUE(boost::dynamic_pointer_cast<ReadOnlyDirectoryReader>(r2));
+    EXPECT_TRUE(std::dynamic_pointer_cast<ReadOnlyDirectoryReader>(r2));
     Collection<IndexReaderPtr> subs = r2->getSequentialSubReaders();
     Collection<int32_t> ints2 = FieldCache::DEFAULT()->getInts(subs[0], L"number");
     r2->close();
 
-    EXPECT_TRUE(boost::dynamic_pointer_cast<ReadOnlySegmentReader>(subs[0]));
-    EXPECT_TRUE(boost::dynamic_pointer_cast<ReadOnlySegmentReader>(subs[1]));
+    EXPECT_TRUE(std::dynamic_pointer_cast<ReadOnlySegmentReader>(subs[0]));
+    EXPECT_TRUE(std::dynamic_pointer_cast<ReadOnlySegmentReader>(subs[1]));
     EXPECT_TRUE(ints.equals(ints2));
 
     dir->close();
@@ -1439,8 +1439,8 @@ TEST_F(IndexReaderTest, testNoTermsIndex) {
     } catch (IllegalStateException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalState)(e));
     }
-    EXPECT_TRUE(!boost::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->termsIndexLoaded());
-    EXPECT_EQ(-1, boost::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->getTermInfosIndexDivisor());
+    EXPECT_TRUE(!std::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->termsIndexLoaded());
+    EXPECT_EQ(-1, std::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->getTermInfosIndexDivisor());
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     writer->addDocument(doc);
     writer->close();
@@ -1451,7 +1451,7 @@ TEST_F(IndexReaderTest, testNoTermsIndex) {
     Collection<IndexReaderPtr> subReaders = r2->getSequentialSubReaders();
     EXPECT_EQ(2, subReaders.size());
     for (Collection<IndexReaderPtr>::iterator sub = subReaders.begin(); sub != subReaders.end(); ++sub) {
-        SegmentReaderPtr subReader = boost::dynamic_pointer_cast<SegmentReader>(*sub);
+        SegmentReaderPtr subReader = std::dynamic_pointer_cast<SegmentReader>(*sub);
         EXPECT_TRUE(!subReader->termsIndexLoaded());
     }
     r2->close();

@@ -351,10 +351,10 @@ TEST_F(QueryParserTest, testWildcard) {
     EXPECT_TRUE(MiscUtils::typeOf<PrefixQuery>(getQuery(L"term*^2", AnalyzerPtr())));
     EXPECT_TRUE(MiscUtils::typeOf<FuzzyQuery>(getQuery(L"term~", AnalyzerPtr())));
     EXPECT_TRUE(MiscUtils::typeOf<FuzzyQuery>(getQuery(L"term~0.7", AnalyzerPtr())));
-    FuzzyQueryPtr fq = boost::dynamic_pointer_cast<FuzzyQuery>(getQuery(L"term~0.7", AnalyzerPtr()));
+    FuzzyQueryPtr fq = std::dynamic_pointer_cast<FuzzyQuery>(getQuery(L"term~0.7", AnalyzerPtr()));
     EXPECT_NEAR(0.7, fq->getMinSimilarity(), 0.1);
     EXPECT_EQ(FuzzyQuery::defaultPrefixLength, fq->getPrefixLength());
-    fq = boost::dynamic_pointer_cast<FuzzyQuery>(getQuery(L"term~", AnalyzerPtr()));
+    fq = std::dynamic_pointer_cast<FuzzyQuery>(getQuery(L"term~", AnalyzerPtr()));
     EXPECT_NEAR(0.5, fq->getMinSimilarity(), 0.1);
     EXPECT_EQ(FuzzyQuery::defaultPrefixLength, fq->getPrefixLength());
 
@@ -452,11 +452,11 @@ TEST_F(QueryParserTest, testQPA) {
 
 TEST_F(QueryParserTest, testRange) {
     checkQueryEquals(L"[ a TO z]", AnalyzerPtr(), L"[a TO z]");
-    EXPECT_EQ(MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT(), boost::dynamic_pointer_cast<TermRangeQuery>(getQuery(L"[ a TO z]", AnalyzerPtr()))->getRewriteMethod());
+    EXPECT_EQ(MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT(), std::dynamic_pointer_cast<TermRangeQuery>(getQuery(L"[ a TO z]", AnalyzerPtr()))->getRewriteMethod());
 
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<SimpleAnalyzer>());
     qp->setMultiTermRewriteMethod(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE());
-    EXPECT_EQ(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE(), boost::dynamic_pointer_cast<TermRangeQuery>(qp->parse(L"[ a TO z]"))->getRewriteMethod());
+    EXPECT_EQ(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE(), std::dynamic_pointer_cast<TermRangeQuery>(qp->parse(L"[ a TO z]"))->getRewriteMethod());
 
     checkQueryEquals(L"[ a TO z ]", AnalyzerPtr(), L"[a TO z]");
     checkQueryEquals(L"{ a TO z}", AnalyzerPtr(), L"{a TO z}");
@@ -769,35 +769,35 @@ public:
 TEST_F(QueryParserTest, testStarParsing) {
     TestStarParsing::StarParserPtr qp = newLucene<TestStarParsing::StarParser>(L"field", newLucene<WhitespaceAnalyzer>());
 
-    TermQueryPtr tq = boost::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:zoo*"));
+    TermQueryPtr tq = std::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:zoo*"));
     EXPECT_EQ(L"zoo", tq->getTerm()->text());
     EXPECT_EQ(2, qp->type[0]);
 
-    tq = boost::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:zoo*^2"));
+    tq = std::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:zoo*^2"));
     EXPECT_EQ(L"zoo", tq->getTerm()->text());
     EXPECT_EQ(2, qp->type[0]);
     EXPECT_EQ(tq->getBoost(), 2);
 
-    tq = boost::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:*"));
+    tq = std::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:*"));
     EXPECT_EQ(L"*", tq->getTerm()->text());
     EXPECT_EQ(1, qp->type[0]);  // could be a valid prefix query in the future too
 
-    tq = boost::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:*^2"));
+    tq = std::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:*^2"));
     EXPECT_EQ(L"*", tq->getTerm()->text());
     EXPECT_EQ(1, qp->type[0]);
     EXPECT_EQ(tq->getBoost(), 2);
 
-    tq = boost::dynamic_pointer_cast<TermQuery>(qp->parse(L"*:foo"));
+    tq = std::dynamic_pointer_cast<TermQuery>(qp->parse(L"*:foo"));
     EXPECT_EQ(L"*", tq->getTerm()->field());
     EXPECT_EQ(L"foo", tq->getTerm()->text());
     EXPECT_EQ(3, qp->type[0]);
 
-    tq = boost::dynamic_pointer_cast<TermQuery>(qp->parse(L"*:*"));
+    tq = std::dynamic_pointer_cast<TermQuery>(qp->parse(L"*:*"));
     EXPECT_EQ(L"*", tq->getTerm()->field());
     EXPECT_EQ(L"*", tq->getTerm()->text());
     EXPECT_EQ(1, qp->type[0]);  // could be handled as a prefix query in the future
 
-    tq = boost::dynamic_pointer_cast<TermQuery>(qp->parse(L"(*:*)"));
+    tq = std::dynamic_pointer_cast<TermQuery>(qp->parse(L"(*:*)"));
     EXPECT_EQ(L"*", tq->getTerm()->field());
     EXPECT_EQ(L"*", tq->getTerm()->text());
     EXPECT_EQ(1, qp->type[0]);
@@ -808,14 +808,14 @@ TEST_F(QueryParserTest, testStopwords) {
     QueryPtr result = qp->parse(L"a:the OR a:foo");
     EXPECT_TRUE(result);
     EXPECT_TRUE(MiscUtils::typeOf<BooleanQuery>(result));
-    EXPECT_TRUE(boost::dynamic_pointer_cast<BooleanQuery>(result)->getClauses().empty());
+    EXPECT_TRUE(std::dynamic_pointer_cast<BooleanQuery>(result)->getClauses().empty());
     result = qp->parse(L"a:woo OR a:the");
     EXPECT_TRUE(result);
     EXPECT_TRUE(MiscUtils::typeOf<TermQuery>(result));
     result = qp->parse(L"(fieldX:xxxxx OR fieldy:xxxxxxxx)^2 AND (fieldx:the OR fieldy:foo)");
     EXPECT_TRUE(result);
     EXPECT_TRUE(MiscUtils::typeOf<BooleanQuery>(result));
-    EXPECT_EQ(boost::dynamic_pointer_cast<BooleanQuery>(result)->getClauses().size(), 2);
+    EXPECT_EQ(std::dynamic_pointer_cast<BooleanQuery>(result)->getClauses().size(), 2);
 }
 
 TEST_F(QueryParserTest, testPositionIncrement) {
@@ -824,7 +824,7 @@ TEST_F(QueryParserTest, testPositionIncrement) {
     String qtxt = L"\"the words in positions pos02578 are stopped in this phrasequery\"";
     //                0         2                     5           7  8
     Collection<int32_t> expectedPositions = newCollection<int32_t>(1, 3, 4, 6, 9);
-    PhraseQueryPtr pq = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(qtxt));
+    PhraseQueryPtr pq = std::dynamic_pointer_cast<PhraseQuery>(qp->parse(qtxt));
     Collection<TermPtr> t = pq->getTerms();
     Collection<int32_t> pos = pq->getPositions();
     for (int32_t i = 0; i < t.size(); ++i) {
@@ -836,7 +836,7 @@ TEST_F(QueryParserTest, testMatchAllDocs) {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<WhitespaceAnalyzer>());
     EXPECT_TRUE(newLucene<MatchAllDocsQuery>()->equals(qp->parse(L"*:*")));
     EXPECT_TRUE(newLucene<MatchAllDocsQuery>()->equals(qp->parse(L"(*:*)")));
-    BooleanQueryPtr bq = boost::dynamic_pointer_cast<BooleanQuery>(qp->parse(L"+*:* -*:*"));
+    BooleanQueryPtr bq = std::dynamic_pointer_cast<BooleanQuery>(qp->parse(L"+*:* -*:*"));
     EXPECT_TRUE(MiscUtils::typeOf<MatchAllDocsQuery>(bq->getClauses()[0]->getQuery()));
     EXPECT_TRUE(MiscUtils::typeOf<MatchAllDocsQuery>(bq->getClauses()[1]->getQuery()));
 }

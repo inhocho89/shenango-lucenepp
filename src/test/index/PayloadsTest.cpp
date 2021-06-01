@@ -203,7 +203,7 @@ TEST_F(PayloadsTest, testPayload) {
         EXPECT_TRUE(check_exception(LuceneException::IndexOutOfBounds)(e));
     }
 
-    PayloadPtr clone = boost::dynamic_pointer_cast<Payload>(payload->clone());
+    PayloadPtr clone = std::dynamic_pointer_cast<Payload>(payload->clone());
     EXPECT_EQ(payload->length(), clone->length());
     for (int32_t i = 0; i < payload->length(); ++i) {
         EXPECT_EQ(payload->byteAt(i), clone->byteAt(i));

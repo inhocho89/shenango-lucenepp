@@ -17,13 +17,12 @@
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
+#include <memory>
 
 #include <sys/types.h>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/variant.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 
 #define SIZEOF_ARRAY(arr) (sizeof(arr) / sizeof((arr)[0]))
 
@@ -56,12 +55,12 @@ typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t> > StringStr
 
 const std::basic_string< wchar_t, std::char_traits<wchar_t> > EmptyString;
 
-typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
-typedef boost::shared_ptr<boost::thread> threadPtr;
+typedef std::shared_ptr<boost::interprocess::file_lock> filelockPtr;
+typedef std::shared_ptr<boost::thread> threadPtr;
 
-typedef boost::shared_ptr<boost::filesystem::ofstream> ofstreamPtr;
-typedef boost::shared_ptr<boost::filesystem::ifstream> ifstreamPtr;
-typedef boost::shared_ptr<std::locale> localePtr;
+typedef std::shared_ptr<boost::filesystem::ofstream> ofstreamPtr;
+typedef std::shared_ptr<boost::filesystem::ifstream> ifstreamPtr;
+typedef std::shared_ptr<std::locale> localePtr;
 }
 
 #include "LuceneFactory.h"
@@ -198,7 +197,7 @@ typedef boost::function<bool (const TermVectorEntryPtr&, const TermVectorEntryPt
 
 template < class KEY, class VALUE, class HASH = boost::hash<KEY>, class EQUAL = std::equal_to<KEY> > class SimpleLRUCache;
 typedef SimpleLRUCache< TermPtr, TermInfoPtr, luceneHash<TermPtr>, luceneEquals<TermPtr> > TermInfoCache;
-typedef boost::shared_ptr<TermInfoCache> TermInfoCachePtr;
+typedef std::shared_ptr<TermInfoCache> TermInfoCachePtr;
 }
 
 #include "Synchronize.h"

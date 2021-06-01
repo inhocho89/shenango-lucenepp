@@ -94,7 +94,7 @@ TokenStreamPtr RussianAnalyzer::tokenStream(const String& fieldName, const Reade
 }
 
 TokenStreamPtr RussianAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    RussianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<RussianAnalyzerSavedStreams>(getPreviousTokenStream()));
+    RussianAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<RussianAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<RussianAnalyzerSavedStreams>();
         streams->source = newLucene<RussianLetterTokenizer>(reader);

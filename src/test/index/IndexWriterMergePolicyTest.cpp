@@ -190,7 +190,7 @@ TEST_F(IndexWriterMergePolicyTest, testMaxBufferedDocsChange) {
         addDoc(writer);
     }
     writer->commit();
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
     writer->commit();
     checkInvariants(writer);
 
@@ -226,7 +226,7 @@ TEST_F(IndexWriterMergePolicyTest, testMergeDocCount0) {
         addDoc(writer);
     }
     writer->commit();
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    std::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
     writer->commit();
     checkInvariants(writer);
     EXPECT_EQ(10, writer->maxDoc());

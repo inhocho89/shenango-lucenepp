@@ -98,7 +98,7 @@ TEST_F(TermVectorsTest, testTermVectorsFieldOrder) {
     Collection<String> expectedFields = newCollection<String>(L"a", L"b", L"c", L"x");
     Collection<int32_t> expectedPositions = newCollection<int32_t>(1, 2, 0);
     for (int32_t i = 0; i < v.size(); ++i) {
-        TermPositionVectorPtr posVec = boost::dynamic_pointer_cast<TermPositionVector>(v[i]);
+        TermPositionVectorPtr posVec = std::dynamic_pointer_cast<TermPositionVector>(v[i]);
         EXPECT_EQ(expectedFields[i], posVec->getField());
         Collection<String> terms = posVec->getTerms();
         EXPECT_EQ(3, terms.size());
@@ -124,13 +124,13 @@ TEST_F(TermVectorsTest, testTermPositionVectors) {
         EXPECT_EQ(vector.size(), 1);
 
         bool shouldBePosVector = (hits[i]->doc % 2 == 0);
-        EXPECT_TRUE(!shouldBePosVector || (shouldBePosVector && boost::dynamic_pointer_cast<TermPositionVector>(vector[0])));
+        EXPECT_TRUE(!shouldBePosVector || (shouldBePosVector && std::dynamic_pointer_cast<TermPositionVector>(vector[0])));
 
         bool shouldBeOffVector = (hits[i]->doc % 3 == 0);
-        EXPECT_TRUE(!shouldBeOffVector || (shouldBeOffVector && boost::dynamic_pointer_cast<TermPositionVector>(vector[0])));
+        EXPECT_TRUE(!shouldBeOffVector || (shouldBeOffVector && std::dynamic_pointer_cast<TermPositionVector>(vector[0])));
 
         if (shouldBePosVector || shouldBeOffVector) {
-            TermPositionVectorPtr posVec = boost::dynamic_pointer_cast<TermPositionVector>(vector[0]);
+            TermPositionVectorPtr posVec = std::dynamic_pointer_cast<TermPositionVector>(vector[0]);
             Collection<String> terms = posVec->getTerms();
             EXPECT_TRUE(terms && !terms.empty());
 
@@ -153,8 +153,8 @@ TEST_F(TermVectorsTest, testTermPositionVectors) {
                 }
             }
         } else {
-            EXPECT_TRUE(!boost::dynamic_pointer_cast<TermPositionVector>(vector[0]));
-            TermFreqVectorPtr freqVec = boost::dynamic_pointer_cast<TermFreqVector>(vector[0]);
+            EXPECT_TRUE(!std::dynamic_pointer_cast<TermPositionVector>(vector[0]));
+            TermFreqVectorPtr freqVec = std::dynamic_pointer_cast<TermFreqVector>(vector[0]);
             Collection<String> terms = freqVec->getTerms();
             EXPECT_TRUE(terms && !terms.empty());
         }
@@ -330,7 +330,7 @@ TEST_F(TermVectorsTest, testMixedVectrosVectors) {
     Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[0]->doc);
     EXPECT_TRUE(vector);
     EXPECT_EQ(vector.size(), 1);
-    TermPositionVectorPtr tfv = boost::dynamic_pointer_cast<TermPositionVector>(vector[0]);
+    TermPositionVectorPtr tfv = std::dynamic_pointer_cast<TermPositionVector>(vector[0]);
     EXPECT_EQ(tfv->getField(), L"field");
     Collection<String> terms = tfv->getTerms();
     EXPECT_EQ(1, terms.size());

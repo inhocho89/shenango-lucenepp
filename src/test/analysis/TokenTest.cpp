@@ -14,7 +14,7 @@ using namespace Lucene;
 typedef LuceneTestFixture TokenTest;
 
 static AttributePtr checkCloneIsEqual(const AttributePtr& att) {
-    AttributePtr clone = boost::dynamic_pointer_cast<Attribute>(att->clone());
+    AttributePtr clone = std::dynamic_pointer_cast<Attribute>(att->clone());
     EXPECT_TRUE(att->equals(clone));
     EXPECT_EQ(att->hashCode(), clone->hashCode());
     return clone;
@@ -145,7 +145,7 @@ TEST_F(TokenTest, testClone) {
     TokenPtr t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    TokenPtr clone = boost::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
+    TokenPtr clone = std::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
     EXPECT_EQ(t->term(), clone->term());
     EXPECT_TRUE(buf != clone->termBuffer());
 
@@ -157,21 +157,21 @@ TEST_F(TokenTest, testClone) {
 
     PayloadPtr pl = newLucene<Payload>(payload);
     t->setPayload(pl);
-    clone = boost::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
+    clone = std::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
     EXPECT_TRUE(pl->equals(clone->getPayload()));
     EXPECT_NE(pl, clone->getPayload());
 }
 
 TEST_F(TokenTest, testCopyTo) {
     TokenPtr t = newLucene<Token>();
-    TokenPtr copy = boost::dynamic_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
+    TokenPtr copy = std::dynamic_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
     EXPECT_EQ(L"", t->term());
     EXPECT_EQ(L"", copy->term());
 
     t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    copy = boost::dynamic_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
+    copy = std::dynamic_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
     EXPECT_EQ(t->term(), copy->term());
     EXPECT_TRUE(buf != copy->termBuffer());
 
@@ -183,7 +183,7 @@ TEST_F(TokenTest, testCopyTo) {
 
     PayloadPtr pl = newLucene<Payload>(payload);
     t->setPayload(pl);
-    copy = boost::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
+    copy = std::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
     EXPECT_TRUE(pl->equals(copy->getPayload()));
     EXPECT_NE(pl, copy->getPayload());
 }

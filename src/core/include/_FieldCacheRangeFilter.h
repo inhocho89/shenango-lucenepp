@@ -132,7 +132,7 @@ public:
         if (Filter::equals(other)) {
             return true;
         }
-        boost::shared_ptr< FieldCacheRangeFilterNumeric<TYPE> > otherFilter(boost::dynamic_pointer_cast< FieldCacheRangeFilterNumeric<TYPE> >(other));
+        std::shared_ptr< FieldCacheRangeFilterNumeric<TYPE> > otherFilter(std::dynamic_pointer_cast< FieldCacheRangeFilterNumeric<TYPE> >(other));
         if (!otherFilter) {
             return false;
         }

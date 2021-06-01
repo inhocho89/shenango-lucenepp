@@ -114,7 +114,7 @@ public:
         // To backup an index we first take a snapshot
         LuceneException finally;
         try {
-            copyFiles(dir, boost::dynamic_pointer_cast<IndexCommit>(dp->snapshot()));
+            copyFiles(dir, std::dynamic_pointer_cast<IndexCommit>(dp->snapshot()));
         } catch (LuceneException& e) {
             finally = e;
         }

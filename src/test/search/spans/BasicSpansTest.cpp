@@ -232,7 +232,7 @@ TEST_F(BasicSpansTest, testNpeInSpanNearInSpanFirstInSpanNot) {
     int32_t n = 5;
     SpanTermQueryPtr hun = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"hundred"));
     SpanTermQueryPtr term40 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"forty"));
-    SpanTermQueryPtr term40c = boost::dynamic_pointer_cast<SpanTermQuery>(term40->clone());
+    SpanTermQueryPtr term40c = std::dynamic_pointer_cast<SpanTermQuery>(term40->clone());
 
     SpanFirstQueryPtr include = newLucene<SpanFirstQuery>(term40, n);
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(hun, term40c), n - 1, true);

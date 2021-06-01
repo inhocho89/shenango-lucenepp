@@ -110,27 +110,27 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode) {
         // test ranges, including possible extension
         int32_t fromIndex = randBitSet->nextInt(sz + 80);
         int32_t toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
-        BitSetPtr aa = boost::dynamic_pointer_cast<BitSet>(a->clone());
+        BitSetPtr aa = std::dynamic_pointer_cast<BitSet>(a->clone());
         aa->flip(fromIndex, toIndex);
-        OpenBitSetPtr bb = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
+        OpenBitSetPtr bb = std::dynamic_pointer_cast<OpenBitSet>(b->clone());
         bb->flip(fromIndex, toIndex);
 
         doIterate(aa, bb, mode); // a problem here is from flip or doIterate
 
         fromIndex = randBitSet->nextInt(sz + 80);
         toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
-        aa = boost::dynamic_pointer_cast<BitSet>(a->clone());
+        aa = std::dynamic_pointer_cast<BitSet>(a->clone());
         aa->clear(fromIndex, toIndex);
-        bb = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
+        bb = std::dynamic_pointer_cast<OpenBitSet>(b->clone());
         bb->clear(fromIndex, toIndex);
 
         doNextSetBit(aa, bb); // a problem here is from clear() or nextSetBit
 
         fromIndex = randBitSet->nextInt(sz + 80);
         toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
-        aa = boost::dynamic_pointer_cast<BitSet>(a->clone());
+        aa = std::dynamic_pointer_cast<BitSet>(a->clone());
         aa->set((uint32_t)fromIndex, (uint32_t)toIndex);
-        bb = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
+        bb = std::dynamic_pointer_cast<OpenBitSet>(b->clone());
         bb->set(fromIndex, toIndex);
 
         doNextSetBit(aa, bb); // a problem here is from set() or nextSetBit
@@ -139,23 +139,23 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode) {
             EXPECT_EQ(a->equals(a0), b->equals(b0));
             EXPECT_EQ(a->cardinality(), b->cardinality());
 
-            BitSetPtr a_and = boost::dynamic_pointer_cast<BitSet>(a->clone());
+            BitSetPtr a_and = std::dynamic_pointer_cast<BitSet>(a->clone());
             a_and->_and(a0);
-            BitSetPtr a_or = boost::dynamic_pointer_cast<BitSet>(a->clone());
+            BitSetPtr a_or = std::dynamic_pointer_cast<BitSet>(a->clone());
             a_or->_or(a0);
-            BitSetPtr a_xor = boost::dynamic_pointer_cast<BitSet>(a->clone());
+            BitSetPtr a_xor = std::dynamic_pointer_cast<BitSet>(a->clone());
             a_xor->_xor(a0);
-            BitSetPtr a_andn = boost::dynamic_pointer_cast<BitSet>(a->clone());
+            BitSetPtr a_andn = std::dynamic_pointer_cast<BitSet>(a->clone());
             a_andn->andNot(a0);
 
-            OpenBitSetPtr b_and = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
+            OpenBitSetPtr b_and = std::dynamic_pointer_cast<OpenBitSet>(b->clone());
             EXPECT_TRUE(b->equals(b_and));
             b_and->_and(b0);
-            OpenBitSetPtr b_or = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
+            OpenBitSetPtr b_or = std::dynamic_pointer_cast<OpenBitSet>(b->clone());
             b_or->_or(b0);
-            OpenBitSetPtr b_xor = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
+            OpenBitSetPtr b_xor = std::dynamic_pointer_cast<OpenBitSet>(b->clone());
             b_xor->_xor(b0);
-            OpenBitSetPtr b_andn = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
+            OpenBitSetPtr b_andn = std::dynamic_pointer_cast<OpenBitSet>(b->clone());
             b_andn->andNot(b0);
 
             doIterate(a_and, b_and, mode);

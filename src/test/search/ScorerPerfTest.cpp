@@ -195,7 +195,7 @@ public:
         bq->add(q, BooleanClause::MUST);
         BitSetPtr _result(result);
         if (!_result) {
-            _result = boost::dynamic_pointer_cast<BitSet>(rnd->clone());
+            _result = std::dynamic_pointer_cast<BitSet>(rnd->clone());
         } else {
             _result->_and(rnd);
         }

@@ -120,7 +120,7 @@ public:
     }
 
     LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr()) {
-        return newLucene<CountingStream>(boost::dynamic_pointer_cast<IndexInput>(input->clone()));
+        return newLucene<CountingStream>(std::dynamic_pointer_cast<IndexInput>(input->clone()));
     }
 };
 
@@ -153,7 +153,7 @@ TEST_F(MultiLevelSkipListTest, testSimpleSkip) {
     writer->close();
 
     IndexReaderPtr reader = SegmentReader::getOnlySegmentReader(dir);
-    SegmentTermPositionsPtr tp = boost::dynamic_pointer_cast<SegmentTermPositions>(reader->termPositions());
+    SegmentTermPositionsPtr tp = std::dynamic_pointer_cast<SegmentTermPositions>(reader->termPositions());
     tp->freqStream(newLucene<CountingStream>(tp->freqStream()));
 
     for (int32_t i = 0; i < 2; ++i) {

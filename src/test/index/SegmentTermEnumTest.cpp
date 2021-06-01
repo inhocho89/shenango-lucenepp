@@ -92,7 +92,7 @@ TEST_F(SegmentTermEnumTest, testPrevTermAtEnd) {
     addDoc(writer, L"aaa bbb");
     writer->close();
     SegmentReaderPtr reader = SegmentReader::getOnlySegmentReader(dir);
-    SegmentTermEnumPtr termEnum = boost::dynamic_pointer_cast<SegmentTermEnum>(reader->terms());
+    SegmentTermEnumPtr termEnum = std::dynamic_pointer_cast<SegmentTermEnum>(reader->terms());
     EXPECT_TRUE(termEnum->next());
     EXPECT_EQ(L"aaa", termEnum->term()->text());
     EXPECT_TRUE(termEnum->next());

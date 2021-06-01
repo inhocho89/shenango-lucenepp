@@ -108,7 +108,7 @@ TokenStreamPtr ArabicAnalyzer::tokenStream(const String& fieldName, const Reader
 }
 
 TokenStreamPtr ArabicAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    ArabicAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<ArabicAnalyzerSavedStreams>(getPreviousTokenStream()));
+    ArabicAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<ArabicAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<ArabicAnalyzerSavedStreams>();
         streams->source = newLucene<ArabicLetterTokenizer>(reader);

@@ -60,7 +60,7 @@ TEST_F(LockFactoryTest, testCustomLockFactory) {
     EXPECT_TRUE(lf->makeLockCount >= 1); // # calls to makeLock is 0 (after instantiating IndexWriter)
 
     for (MapStringLock::iterator lockName = lf->locksCreated.begin(); lockName != lf->locksCreated.end(); ++lockName) {
-        MockLockPtr lock(boost::dynamic_pointer_cast<MockLock>(lockName->second));
+        MockLockPtr lock(std::dynamic_pointer_cast<MockLock>(lockName->second));
         EXPECT_TRUE(lock->lockAttempts > 0); // # calls to Lock.obtain is 0 (after instantiating IndexWriter)
     }
 
@@ -93,7 +93,7 @@ TEST_F(LockFactoryTest, testRAMDirectoryNoLocking) {
 TEST_F(LockFactoryTest, testDefaultRAMDirectory) {
     DirectoryPtr dir(newLucene<RAMDirectory>());
     LockFactoryPtr lockFactory(dir->getLockFactory());
-    EXPECT_TRUE(boost::dynamic_pointer_cast<SingleInstanceLockFactory>(lockFactory));
+    EXPECT_TRUE(std::dynamic_pointer_cast<SingleInstanceLockFactory>(lockFactory));
 
     IndexWriterPtr writer(newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED));
 

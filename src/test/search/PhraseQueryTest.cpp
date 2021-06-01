@@ -336,7 +336,7 @@ TEST_F(PhraseQueryTest, testToString) {
     StopAnalyzerPtr analyzer = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", analyzer);
     qp->setEnablePositionIncrements(true);
-    PhraseQueryPtr q = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"this hi this is a test is\""));
+    PhraseQueryPtr q = std::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"this hi this is a test is\""));
     EXPECT_EQ(L"field:\"? hi ? ? ? test\"", q->toString());
     q->add(newLucene<Term>(L"field", L"hello"), 1);
     EXPECT_EQ(L"field:\"? hi|hello ? ? ? test\"", q->toString());

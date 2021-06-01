@@ -21,7 +21,7 @@ TokenStreamPtr ChineseAnalyzer::tokenStream(const String& fieldName, const Reade
 }
 
 TokenStreamPtr ChineseAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
-    ChineseAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<ChineseAnalyzerSavedStreams>(getPreviousTokenStream()));
+    ChineseAnalyzerSavedStreamsPtr streams(std::dynamic_pointer_cast<ChineseAnalyzerSavedStreams>(getPreviousTokenStream()));
     if (!streams) {
         streams = newLucene<ChineseAnalyzerSavedStreams>();
         streams->source = newLucene<ChineseTokenizer>(reader);

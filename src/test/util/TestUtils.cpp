@@ -52,7 +52,7 @@ void syncConcurrentMerges(const IndexWriterPtr& writer) {
 
 void syncConcurrentMerges(const MergeSchedulerPtr& ms) {
     if (MiscUtils::typeOf<ConcurrentMergeScheduler>(ms)) {
-        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->sync();
+        std::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->sync();
     }
 }
 
