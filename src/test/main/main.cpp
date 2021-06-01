@@ -30,12 +30,25 @@
 
 #include <gtest/gtest.h>
 
+#include "cc/runtime.h"
+
 #include <boost/algorithm/string.hpp>
 
 using namespace Lucene;
 
+static int return_code;
+
+void MainHandler(void *arg) {
+  int ret;
+
+  printf("gtest running with Shenango...\n");
+  ret = RUN_ALL_TESTS();
+  return_code = ret;
+}
+
 int main(int argc, char* argv[]) {
     String testDir;
+    int ret;
 
     for (int32_t i = 0; i < argc; ++i) {
         if (strncmp(argv[i], "--test_dir", 9) == 0) {
@@ -70,5 +83,10 @@ int main(int argc, char* argv[]) {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new LuceneGlobalFixture());
 
-    return RUN_ALL_TESTS();
+    ret = runtime_init(argv[1], MainHandler, NULL);
+    if (ret) {
+      printf("failed to start runtime\n");
+      return ret;
+    }
+    return 0;
 }
