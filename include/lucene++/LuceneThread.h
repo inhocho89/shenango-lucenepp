@@ -52,11 +52,8 @@ public:
     /// return running thread priority.
     virtual int32_t getPriority();
 
-    /// wait for thread to finish using an optional timeout.
-    virtual bool join(int32_t timeout = 0);
-
-    /// causes the currently executing thread object to temporarily pause and allow other threads to execute.
-    virtual void yield();
+    /// wait for thread to finish.
+    virtual void join();
 
     /// override to provide the body of the thread.
     virtual void run() = 0;

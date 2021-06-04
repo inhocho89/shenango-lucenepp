@@ -73,22 +73,9 @@ int32_t LuceneThread::getPriority() {
 #endif
 }
 
-void LuceneThread::yield() {
-    if (thread) {
-        thread->yield();
-    }
-}
-
-bool LuceneThread::join(int32_t timeout) {
-    while (isAlive() && !thread->timed_join(boost::posix_time::milliseconds(timeout))) {
-        if (timeout != 0) {
-            return false;
-        }
-        if (thread->timed_join(boost::posix_time::milliseconds(10))) {
-            return true;
-        }
-    }
-    return true;
+void LuceneThread::join() {
+    if (isAlive())
+        thread->join();
 }
 
 int64_t LuceneThread::currentId() {
