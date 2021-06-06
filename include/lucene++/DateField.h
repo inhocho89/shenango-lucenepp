@@ -7,6 +7,7 @@
 #ifndef DATEFIELD_H
 #define DATEFIELD_H
 
+#include "boost/date_time/posix_time/posix_time.hpp"
 #include "LuceneObject.h"
 
 namespace Lucene {
