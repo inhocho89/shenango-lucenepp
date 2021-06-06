@@ -24,7 +24,7 @@ LuceneSignalPtr LuceneSync::getSignal() {
     return objectSignal;
 }
 
-void LuceneSync::lock(int32_t timeout) {
+void LuceneSync::lock() {
     getSync()->lock();
 }
 
@@ -36,8 +36,8 @@ bool LuceneSync::holdsLock() {
     return getSync()->holdsLock();
 }
 
-void LuceneSync::wait(int32_t timeout) {
-    getSignal()->wait(timeout);
+void LuceneSync::wait() {
+    getSignal()->wait();
 }
 
 void LuceneSync::notifyAll() {

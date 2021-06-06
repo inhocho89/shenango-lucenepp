@@ -7,7 +7,7 @@
 #ifndef LUCENESIGNAL_H
 #define LUCENESIGNAL_H
 
-#include <boost/thread/condition.hpp>
+#include "cc/sync.h"
 #include "Lucene.h"
 
 namespace Lucene {
@@ -19,8 +19,8 @@ public:
     virtual ~LuceneSignal();
 
 protected:
-    boost::mutex waitMutex;
-    boost::condition signalCondition;
+    rt::Mutex waitMutex;
+    rt::CondVar signalCondition;
     SynchronizePtr objectLock;
 
 public:
@@ -28,7 +28,7 @@ public:
     static void createSignal(LuceneSignalPtr& signal, const SynchronizePtr& objectLock);
 
     /// Wait for signal using an optional timeout.
-    void wait(int32_t timeout = 0);
+    void wait();
 
     /// Notify all threads waiting for signal.
     void notifyAll();

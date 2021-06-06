@@ -20,6 +20,7 @@
 #include <memory>
 
 #include <sys/types.h>
+#include "cc/thread.h"
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/variant.hpp>
@@ -56,7 +57,7 @@ typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t> > StringStr
 const std::basic_string< wchar_t, std::char_traits<wchar_t> > EmptyString;
 
 typedef std::shared_ptr<boost::interprocess::file_lock> filelockPtr;
-typedef std::shared_ptr<boost::thread> threadPtr;
+typedef std::shared_ptr<rt::Thread> threadPtr;
 
 typedef std::shared_ptr<boost::filesystem::ofstream> ofstreamPtr;
 typedef std::shared_ptr<boost::filesystem::ifstream> ifstreamPtr;

@@ -7,14 +7,11 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 
-#include <boost/asio.hpp>
+#include <queue>
 #include <boost/any.hpp>
-#include <boost/thread/thread.hpp>
 #include "LuceneObject.h"
 
 namespace Lucene {
-
-typedef std::shared_ptr<boost::asio::io_service::work> workPtr;
 
 /// A Future represents the result of an asynchronous computation. Methods are provided to check if the computation
 /// is complete, to wait for its completion, and to retrieve the result of the computation. The result can only be
@@ -36,7 +33,7 @@ public:
     TYPE get() {
         SyncLock syncLock(this);
         while (value.empty()) {
-            wait(10);
+            wait();
         }
         return value.empty() ? TYPE() : boost::any_cast<TYPE>(value);
     }
@@ -50,12 +47,14 @@ public:
 
     LUCENE_CLASS(ThreadPool);
 
+    static constexpr int32_t THREADPOOL_SIZE = 5;
 protected:
-    boost::asio::io_service io_service;
-    workPtr work;
-    boost::thread_group threadGroup;
-
-    static const int32_t THREADPOOL_SIZE;
+    std::queue<std::function<void()>> works;
+    bool running;
+    int running_threads;
+    rt::Mutex worksLock;
+    rt::CondVar worksCV;
+    rt::Thread threads[THREADPOOL_SIZE];
 
 public:
     /// Get singleton thread pool instance.
@@ -64,7 +63,13 @@ public:
     template <typename FUNC>
     FuturePtr scheduleTask(FUNC func) {
         FuturePtr future(newInstance<Future>());
-        io_service.post(boost::bind(&ThreadPool::execute<FUNC>, this, func, future));
+	worksLock.Lock();
+	works.push(std::bind(&ThreadPool::execute<FUNC>, this, func, future));
+	if (running_threads < THREADPOOL_SIZE) {
+            worksCV.Signal();
+	}
+	worksLock.Unlock();
+
         return future;
     }
 
@@ -74,6 +79,11 @@ protected:
     void execute(FUNC func, const FuturePtr& future) {
         future->set(func());
         future->notifyAll();
+    }
+
+    void _run();
+    static void run() {
+        getInstance()->_run();
     }
 };
 

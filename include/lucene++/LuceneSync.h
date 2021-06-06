@@ -28,7 +28,7 @@ public:
     virtual LuceneSignalPtr getSignal();
 
     /// Lock this object using an optional timeout.
-    virtual void lock(int32_t timeout = 0);
+    virtual void lock();
 
     /// Unlock this object.
     virtual void unlock();
@@ -37,7 +37,7 @@ public:
     virtual bool holdsLock();
 
     /// Wait for signal using an optional timeout.
-    virtual void wait(int32_t timeout = 0);
+    virtual void wait();
 
     /// Notify all threads waiting for signal.
     virtual void notifyAll();

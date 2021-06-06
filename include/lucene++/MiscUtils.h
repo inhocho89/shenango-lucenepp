@@ -7,6 +7,7 @@
 #ifndef MISCUTILS_H
 #define MISCUTILS_H
 
+#include "boost/date_time/posix_time/posix_time.hpp"
 #include "Lucene.h"
 
 namespace Lucene {

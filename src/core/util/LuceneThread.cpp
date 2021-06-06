@@ -5,8 +5,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <boost/thread/thread.hpp>
 #include "LuceneThread.h"
+
+#include "cc/timer.h"
 
 namespace Lucene {
 
@@ -29,12 +30,16 @@ LuceneThread::~LuceneThread() {
 
 void LuceneThread::start() {
     setRunning(false);
-    thread = newInstance<boost::thread>(LuceneThread::runThread, this);
+    thread = newInstance<rt::Thread>(std::bind(&LuceneThread::runThread, this));
     setRunning(true);
 }
 
-void LuceneThread::runThread(LuceneThread* thread) {
-    LuceneThreadPtr threadObject(thread->shared_from_this());
+void LuceneThread::detach() {
+    thread->Detach();
+}
+
+void LuceneThread::runThread() {
+    LuceneThreadPtr threadObject(this->shared_from_this());
     try {
         threadObject->run();
     } catch (...) {
@@ -75,23 +80,24 @@ int32_t LuceneThread::getPriority() {
 
 void LuceneThread::join() {
     if (isAlive())
-        thread->join();
+        thread->Join();
 }
 
 int64_t LuceneThread::currentId() {
 #if defined(_WIN32) || defined(_WIN64)
     return (int64_t)GetCurrentThreadId();
 #else
-    return (int64_t)pthread_self();
+    return reinterpret_cast<int64_t>(thread_self());
 #endif
 }
 
 void LuceneThread::threadSleep(int32_t time) {
-    boost::this_thread::sleep(boost::posix_time::milliseconds(time));
+    // Note: time in milliseconds
+    rt::Sleep((uint64_t)(time) * 1000);
 }
 
 void LuceneThread::threadYield() {
-    boost::this_thread::yield();
+    rt::Yield();
 }
 
 }

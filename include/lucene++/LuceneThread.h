@@ -43,6 +43,8 @@ public:
     /// start thread see {@link #run}.
     virtual void start();
 
+    virtual void detach();
+
     /// return whether thread is current running.
     virtual bool isAlive();
 
@@ -75,7 +77,7 @@ protected:
     bool isRunning();
 
     /// function that controls the lifetime of the running thread.
-    static void runThread(LuceneThread* thread);
+    void runThread();
 };
 
 }

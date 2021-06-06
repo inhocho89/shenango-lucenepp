@@ -91,7 +91,7 @@ void ConcurrentMergeScheduler::sync() {
     SyncLock syncLock(this);
     while (mergeThreadCount() > 0) {
         message(L"now wait for threads; currently " + StringUtils::toString(mergeThreads.size()) + L" still running");
-        wait(1000);
+        wait();
     }
     mergeThreads.clear();
 }
@@ -140,7 +140,7 @@ void ConcurrentMergeScheduler::merge(const IndexWriterPtr& writer) {
             MergeThreadPtr merger;
             while (mergeThreadCount() >= maxThreadCount) {
                 message(L"    too many merge threads running; stalling...");
-                wait(1000);
+                wait();
             }
 
             message(L"  consider merge " + merge->segString(dir));
@@ -153,6 +153,7 @@ void ConcurrentMergeScheduler::merge(const IndexWriterPtr& writer) {
             message(L"    launch new thread");
 
             merger->start();
+	    merger->detach();
             success = true;
         } catch (LuceneException& e) {
             finally = e;

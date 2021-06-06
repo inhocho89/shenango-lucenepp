@@ -7,7 +7,7 @@
 #ifndef SYNCHRONIZE_H
 #define SYNCHRONIZE_H
 
-#include <boost/thread/recursive_mutex.hpp>
+#include "cc/sync.h"
 #include "Lucene.h"
 
 namespace Lucene {
@@ -19,7 +19,7 @@ public:
     virtual ~Synchronize();
 
 protected:
-    boost::recursive_timed_mutex mutexSynchronize;
+    rt::Mutex mutexSynchronize;
     int64_t lockThread;
     int32_t recursionCount;
 
@@ -27,8 +27,8 @@ public:
     /// create a new Synchronize instance atomically.
     static void createSync(SynchronizePtr& sync);
 
-    /// Lock mutex using an optional timeout.
-    void lock(int32_t timeout = 0);
+    /// Lock mutex
+    void lock();
 
     /// Unlock mutex.
     void unlock();
@@ -43,12 +43,12 @@ public:
 /// Utility class to support scope locking.
 class LPPAPI SyncLock {
 public:
-    SyncLock(const SynchronizePtr& sync, int32_t timeout = 0);
+    SyncLock(const SynchronizePtr& sync);
 
     template <class OBJECT>
-    SyncLock(OBJECT object, int32_t timeout = 0) {
+    SyncLock(OBJECT object) {
         this->sync = object->getSync();
-        lock(timeout);
+        lock();
     }
 
     virtual ~SyncLock();
@@ -57,7 +57,7 @@ protected:
     SynchronizePtr sync;
 
 protected:
-    void lock(int32_t timeout);
+    void lock();
 };
 
 }

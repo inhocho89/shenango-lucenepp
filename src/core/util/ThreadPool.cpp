@@ -12,18 +12,23 @@ namespace Lucene {
 Future::~Future() {
 }
 
-const int32_t ThreadPool::THREADPOOL_SIZE = 5;
-
 ThreadPool::ThreadPool() {
-    work.reset(new boost::asio::io_service::work(io_service));
+    running = true;
+    running_threads = THREADPOOL_SIZE;
     for (int32_t i = 0; i < THREADPOOL_SIZE; ++i) {
-        threadGroup.create_thread(boost::bind(&boost::asio::io_service::run, &io_service));
+        threads[i] = rt::Thread(ThreadPool::run);
     }
 }
 
 ThreadPool::~ThreadPool() {
-    work.reset(); // stop all threads
-    threadGroup.join_all(); // wait for all competition
+    worksLock.Lock();
+    running = false;
+    worksCV.SignalAll();
+    worksLock.Unlock();
+    // wait for all thread
+    for (int32_t i = 0; i < THREADPOOL_SIZE; ++i) {
+        threads[i].Join();
+    }
 }
 
 ThreadPoolPtr ThreadPool::getInstance() {
@@ -35,4 +40,28 @@ ThreadPoolPtr ThreadPool::getInstance() {
     return threadPool;
 }
 
+void ThreadPool::_run() {
+    while (true) {
+        worksLock.Lock();
+        while (works.empty() && running) {
+            running_threads--;
+            worksCV.Wait(&worksLock);
+	    running_threads++;
+        }
+
+	if (!running) {
+            running_threads--;
+            worksLock.Unlock();
+	    return;
+	}
+
+	// retrieve a work
+	std::function<void()> f = works.front();
+	works.pop();
+	worksLock.Unlock();
+
+	// execute a work
+	f();
+    }
+}
 }
