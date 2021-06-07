@@ -152,8 +152,7 @@ void ConcurrentMergeScheduler::merge(const IndexWriterPtr& writer) {
             mergeThreads.add(merger);
             message(L"    launch new thread");
 
-            merger->start();
-	    merger->detach();
+            merger->start(true);
             success = true;
         } catch (LuceneException& e) {
             finally = e;

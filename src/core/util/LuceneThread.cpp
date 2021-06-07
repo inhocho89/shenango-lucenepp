@@ -23,19 +23,28 @@ const int32_t LuceneThread::MIN_THREAD_PRIORITY = -2;
 
 LuceneThread::LuceneThread() {
     running = false;
+    detached = false;
 }
 
 LuceneThread::~LuceneThread() {
+    if (thread && !detached) {
+        thread->Join();
+	thread.reset();
+    }
 }
 
-void LuceneThread::start() {
+void LuceneThread::start(bool detach) {
     setRunning(false);
+    if (thread && !detached) {
+        thread->Join();
+	thread.reset();
+    }
     thread = newInstance<rt::Thread>(std::bind(&LuceneThread::runThread, this));
+    if (detach) {
+        thread->Detach();
+	detached = true;
+    }
     setRunning(true);
-}
-
-void LuceneThread::detach() {
-    thread->Detach();
 }
 
 void LuceneThread::runThread() {
@@ -79,8 +88,10 @@ int32_t LuceneThread::getPriority() {
 }
 
 void LuceneThread::join() {
-    if (isAlive())
+    if (thread) {
         thread->Join();
+	thread.reset();
+    }
 }
 
 int64_t LuceneThread::currentId() {

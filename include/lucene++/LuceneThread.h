@@ -39,11 +39,11 @@ protected:
     /// @see #isAlive
     bool running;
 
+    bool detached;
+
 public:
     /// start thread see {@link #run}.
-    virtual void start();
-
-    virtual void detach();
+    virtual void start(bool detach = false);
 
     /// return whether thread is current running.
     virtual bool isAlive();
