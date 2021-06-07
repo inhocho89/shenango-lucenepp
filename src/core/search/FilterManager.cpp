@@ -22,6 +22,10 @@ FilterManager::FilterManager() {
 }
 
 FilterManager::~FilterManager() {
+    if (filterCleaner) {
+        filterCleaner->stop();
+        filterCleaner->join();
+    }
 }
 
 void FilterManager::initialize() {
@@ -106,6 +110,10 @@ void FilterCleaner::run() {
         // take a nap
         LuceneThread::threadSleep(manager->cleanSleepTime);
     }
+}
+
+void FilterCleaner::stop() {
+    running = false;
 }
 
 }

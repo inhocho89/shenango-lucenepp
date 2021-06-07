@@ -47,6 +47,7 @@ protected:
 
 public:
     virtual void run();
+    void stop();
 };
 
 }
