@@ -27,8 +27,11 @@ public:
     /// create a new LuceneSignal instance atomically.
     static void createSignal(LuceneSignalPtr& signal, const SynchronizePtr& objectLock);
 
-    /// Wait for signal using an optional timeout.
+    /// Wait for signal
     void wait();
+
+    /// wait for signal with timeout
+    void wait(int32_t timeout);
 
     /// Notify all threads waiting for signal.
     void notifyAll();

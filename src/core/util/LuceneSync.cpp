@@ -40,6 +40,10 @@ void LuceneSync::wait() {
     getSignal()->wait();
 }
 
+void LuceneSync::wait(int32_t timeout) {
+    getSignal()->wait(timeout);
+}
+
 void LuceneSync::notifyAll() {
     getSignal()->notifyAll();
 }

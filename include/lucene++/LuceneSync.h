@@ -36,8 +36,11 @@ public:
     /// Returns true if this object is currently locked by current thread.
     virtual bool holdsLock();
 
-    /// Wait for signal using an optional timeout.
+    /// Wait for signal
     virtual void wait();
+
+    /// wait for signal with timeout
+    virtual void wait(int32_t timeout);
 
     /// Notify all threads waiting for signal.
     virtual void notifyAll();

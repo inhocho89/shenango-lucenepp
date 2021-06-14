@@ -416,7 +416,7 @@ bool DocumentsWriter::pauseAllThreads() {
     SyncLock syncLock(this);
     ++pauseThreads;
     while (!allThreadsIdle()) {
-        wait();
+        wait(1000);
     }
     return aborting;
 }
@@ -747,7 +747,7 @@ void DocumentsWriter::remapDeletes(const SegmentInfosPtr& infos, Collection< Col
 void DocumentsWriter::waitReady(const DocumentsWriterThreadStatePtr& state) {
     SyncLock syncLock(this);
     while (!closed && ((state && !state->isIdle) || pauseThreads != 0 || flushPending || aborting)) {
-        wait();
+        wait(1000);
     }
     if (closed) {
         boost::throw_exception(AlreadyClosedException(L"this IndexWriter is closed"));
@@ -1017,7 +1017,7 @@ void DocumentsWriter::finishDocument(const DocumentsWriterThreadStatePtr& perThr
 void DocumentsWriter::waitForWaitQueue() {
     SyncLock syncLock(this);
     do {
-        wait();
+        wait(1000);
     } while (!waitQueue->doResume());
 }
 

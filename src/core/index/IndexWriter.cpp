@@ -3100,7 +3100,7 @@ void IndexWriter::doWait() {
     // NOTE: the callers of this method should in theory be able to do simply wait(), but, as a defense against
     // thread timing hazards where notifyAll() fails to be called, we wait for at most 1 second and then return
     // so caller can check if wait conditions are satisfied
-    wait();
+    wait(1000);
 }
 
 void IndexWriter::startCommit(int64_t sizeInBytes, MapStringString commitUserData) {
