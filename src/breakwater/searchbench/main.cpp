@@ -143,9 +143,12 @@ void MeasureSearchTime(const String& term) {
   }
 
   std::sort(latencies.begin(), latencies.end());
+  int count = latencies.size();
   std::cout << "min = " << latencies[0] << ", "
-	    << "p50 = " << latencies[numSamples * 0.5] << ", "
-	    << "max = " << latencies[numSamples - 1] << std::endl;
+	    << "p50 = " << latencies[count * 0.5] << ", "
+	    << "max = " << latencies[count - 1] << std::endl;
+  std::cout << latencies[0] << "," << latencies[count * 0.5] << ","
+	   << latencies[count * 0.99] << "," << latencies[count - 1] << std::endl;
 }
 
 void MainHandler(void *arg) {
