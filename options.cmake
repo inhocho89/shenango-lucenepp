@@ -32,7 +32,7 @@ OFF
 option(
     ENABLE_TEST
     "Enable the tests"
-    ON)
+    OFF)
 
 option(
     ENABLE_DEMO

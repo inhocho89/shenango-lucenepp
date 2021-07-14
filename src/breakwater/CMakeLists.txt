@@ -1,0 +1,2 @@
+add_subdirectory(simpleserver)
+add_subdirectory(searchbench)
