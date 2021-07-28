@@ -156,7 +156,7 @@ void PopulateIndex() {
   for (int i = 0 ; i < numDocs ; ++i) {
     indexWriter->addDocument(createDocument(ChooseTerm()));
   }
-  //indexWriter->optimize();
+  indexWriter->optimize();
   indexWriter->close();
   uint64_t finish = microtime();
   std::cout << "Done (" << (finish - start) / 1000.0 << " ms)" << std::endl;
