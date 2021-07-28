@@ -19,8 +19,8 @@ Synchronize::~Synchronize() {
 }
 
 void Synchronize::createSync(SynchronizePtr& sync) {
-    static rt::Spin lockMutex;
-    rt::ScopedLock<rt::Spin> syncLock(&lockMutex);
+    static rt::Mutex lockMutex;
+    rt::ScopedLock<rt::Mutex> syncLock(&lockMutex);
 
     if (!sync) {
         sync = newInstance<Synchronize>();

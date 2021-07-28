@@ -19,7 +19,7 @@ public:
     virtual ~Synchronize();
 
 protected:
-    rt::Spin mutexSynchronize;
+    rt::Mutex mutexSynchronize;
     int64_t lockThread;
     int32_t recursionCount;
 

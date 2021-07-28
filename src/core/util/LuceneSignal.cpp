@@ -18,8 +18,8 @@ LuceneSignal::~LuceneSignal() {
 }
 
 void LuceneSignal::createSignal(LuceneSignalPtr& signal, const SynchronizePtr& objectLock) {
-    static rt::Spin lockMutex;
-    rt::ScopedLock<rt::Spin> syncLock(&lockMutex);
+    static rt::Mutex lockMutex;
+    rt::ScopedLock<rt::Mutex> syncLock(&lockMutex);
     if (!signal) {
         signal = newInstance<LuceneSignal>(objectLock);
     }
