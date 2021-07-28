@@ -47,7 +47,7 @@ public:
 
     LUCENE_CLASS(ThreadPool);
 
-    static constexpr int32_t THREADPOOL_SIZE = 5;
+    static constexpr int32_t THREADPOOL_SIZE = 10;
 protected:
     std::queue<std::function<void()>> works;
     bool running;
