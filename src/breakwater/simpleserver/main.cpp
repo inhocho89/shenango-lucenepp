@@ -58,14 +58,10 @@ RAMDirectoryPtr dir;
 static IndexSearcherPtr searchers[NCPU];
 
 struct payload {
-  uint64_t work_iterations;
+  uint64_t term_index;
   uint64_t index;
-  uint64_t tsc_end;
-  uint32_t cpu;
-  uint64_t server_queue;
   uint64_t hash;
 };
-constexpr int PAYLOAD_ID_OFF = offsetof(payload, index);
 
 constexpr uint64_t kRPCSStatPort = 8002;
 constexpr uint64_t kRPCSStatMagic = 0xDEADBEEF;
@@ -94,7 +90,7 @@ void ReadFreqTerms() {
 
   while(std::getline(fin, line)) {
     std::stringstream ss(line);
-    
+
     getline(ss, word, ',');
     wword = String(word.length(), L' ');
     std::copy(word.begin(), word.end(), wword.begin());
@@ -149,17 +145,33 @@ DocumentPtr createDocument(const String& contents) {
 void PopulateIndex() {
   std::cout << "Populating indices ...\t" << std::flush;
   uint64_t start = microtime();
+  int num_docs = 0;
   dir = newLucene<RAMDirectory>();
 
   IndexWriterPtr indexWriter = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true,
                                                       IndexWriter::MaxFieldLengthLIMITED);
-  for (int i = 0 ; i < numDocs ; ++i) {
-    indexWriter->addDocument(createDocument(ChooseTerm()));
+
+  std::string line;
+  String wline;
+  std::ifstream tweet_txt("2021-11-27-dataset-text.tsv");
+
+  if (!tweet_txt.is_open()) {
+    std::cout << "Unable to open file" << std::endl;
+    return;
   }
+
+  while (getline(tweet_txt, line)) {
+    wline = String(line.length(), L' ');
+    std::copy(line.begin(), line.end(), wline.begin());
+    indexWriter->addDocument(createDocument(wline));
+    num_docs++;
+  }
+  tweet_txt.close();
+
   indexWriter->optimize();
   indexWriter->close();
   uint64_t finish = microtime();
-  std::cout << "Done (" << (finish - start) / 1000.0 << " ms)" << std::endl;
+  std::cout << "Done: " << num_docs << " documents (" << (finish - start) / 1000000.0 << " s)" << std::endl;
 }
 
 void RPCSStatWorker(std::unique_ptr<rt::TcpConn> c) {
@@ -229,15 +241,12 @@ void RequestHandler(struct srpc_ctx *ctx) {
   int core_id = get_current_affinity();
 
   // Perform work
-  QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"contents", ChooseTerm(in->hash)));
+  QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"contents", terms[ntoh64(in->term_index)]));
   Collection<ScoreDocPtr> hits = searchers[core_id]->search(query, FilterPtr(), searchN)->scoreDocs;
 
   ctx->resp_len = sizeof(payload);
   payload *out = reinterpret_cast<payload *>(ctx->resp_buf);
   memcpy(out, in, sizeof(*out));
-  out->tsc_end = hton64(rdtscp(&out->cpu));
-  out->cpu = hton32(out->cpu);
-  out->server_queue = hton64(rt::RuntimeQueueUS());
 }
 
 void MainHandler(void *arg) {
@@ -257,17 +266,38 @@ void MainHandler(void *arg) {
   printf("Ready to run the server...\n");
   int ret = rpc::RpcServerEnable(RequestHandler);
   if (ret) panic("couldn't enable RPC server");
-  
+
   rt::WaitGroup(1).Wait();
 }
 
 int main(int argc, char* argv[]) {
   int ret;
 
-  crpc_ops = &cbw_ops;
-  srpc_ops = &sbw_ops;
+  std::string olc = argv[1]; // overload control
+  if (olc.compare("breakwater") == 0) {
+    crpc_ops = &cbw_ops;
+    srpc_ops = &sbw_ops;
+  } else if (olc.compare("breakwater2") == 0) {
+    crpc_ops = &cbw_ops;
+    srpc_ops = &sbw2_ops;
+  } else if (olc.compare("seda") == 0) {
+    crpc_ops = &csd_ops;
+    srpc_ops = &ssd_ops;
+  } else if (olc.compare("dagor") == 0) {
+    crpc_ops = &cdg_ops;
+    srpc_ops = &sdg_ops;
+  } else if (olc.compare("nocontrol") == 0) {
+    crpc_ops = &cnc_ops;
+    srpc_ops = &snc_ops;
+  } else {
+    std::cerr << "invalid algorithm: " << olc << std::endl;
+    std::cerr << "usage: [alg] [cfg_file]\n"
+	      << "\talg: overload control algorithms (breakwater/seda/dagor)\n"
+	      << "\tcfg_file: Shenango configuration file\n" << std::endl;
+    return -EINVAL;
+  }
 
-  ret = runtime_init(argv[1], MainHandler, NULL);
+  ret = runtime_init(argv[2], MainHandler, NULL);
   if (ret) {
     printf("failed to start runtime\n");
     return ret;
