@@ -36,6 +36,8 @@ public:
     /// Returns true if this object is currently locked by current thread.
     virtual bool holdsLock();
 
+    virtual uint64_t mutexQueueUS();
+
     /// Wait for signal
     virtual void wait();
 

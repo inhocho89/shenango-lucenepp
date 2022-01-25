@@ -8,6 +8,7 @@
 #define LUCENESIGNAL_H
 
 #include "cc/sync.h"
+#include "breakwater/sync++.h"
 #include "Lucene.h"
 
 namespace Lucene {
@@ -19,8 +20,8 @@ public:
     virtual ~LuceneSignal();
 
 protected:
-    rt::Mutex waitMutex;
-    rt::CondVar signalCondition;
+    rpc::Mutex waitMutex;
+    rpc::CondVar signalCondition;
     SynchronizePtr objectLock;
 
 public:

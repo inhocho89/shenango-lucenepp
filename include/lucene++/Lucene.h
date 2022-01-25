@@ -19,6 +19,8 @@
 #include <stdexcept>
 #include <memory>
 
+#include <breakwater/rpc.h>
+
 #include <sys/types.h>
 #include "cc/thread.h"
 

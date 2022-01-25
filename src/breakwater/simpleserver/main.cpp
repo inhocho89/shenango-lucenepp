@@ -50,6 +50,11 @@ constexpr uint64_t numSamples = 1;
 constexpr uint64_t NORM = 100;
 constexpr int searchN = 1000;
 
+atomic64_t acc_hits;
+atomic64_t num_resp;
+
+#define NDIR 1
+
 std::vector<String> terms;
 std::vector<uint64_t> frequencies;
 uint64_t weight_sum;
@@ -138,7 +143,7 @@ String ChooseTerm(uint64_t hash) {
 
 DocumentPtr createDocument(const String& contents) {
   DocumentPtr document = newLucene<Document>();
-  document->add(newLucene<Field>(L"contents", contents, Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+  document->add(newLucene<Field>(L"contents", contents, Field::STORE_YES, Field::INDEX_ANALYZED));
   return document;
 }
 
@@ -146,10 +151,11 @@ void PopulateIndex() {
   std::cout << "Populating indices ...\t" << std::flush;
   uint64_t start = microtime();
   int num_docs = 0;
-  dir = newLucene<RAMDirectory>();
+  IndexWriterPtr indexWriter;
 
-  IndexWriterPtr indexWriter = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true,
-                                                      IndexWriter::MaxFieldLengthLIMITED);
+  dir = newLucene<RAMDirectory>();
+  indexWriter = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true,
+				       IndexWriter::MaxFieldLengthLIMITED);
 
   std::string line;
   String wline;
@@ -170,6 +176,7 @@ void PopulateIndex() {
 
   indexWriter->optimize();
   indexWriter->close();
+
   uint64_t finish = microtime();
   std::cout << "Done: " << num_docs << " documents (" << (finish - start) / 1000000.0 << " s)" << std::endl;
 }
@@ -244,6 +251,11 @@ void RequestHandler(struct srpc_ctx *ctx) {
   QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"contents", terms[ntoh64(in->term_index)]));
   Collection<ScoreDocPtr> hits = searchers[core_id]->search(query, FilterPtr(), searchN)->scoreDocs;
 
+  if (!ctx->drop) {
+    atomic64_fetch_and_add(&acc_hits, hits.size());
+    atomic64_inc(&num_resp);
+  }
+
   ctx->resp_len = sizeof(payload);
   payload *out = reinterpret_cast<payload *>(ctx->resp_buf);
   memcpy(out, in, sizeof(*out));
@@ -251,15 +263,25 @@ void RequestHandler(struct srpc_ctx *ctx) {
 
 void MainHandler(void *arg) {
   rt::Thread([] { RPCSStatServer(); }).Detach();
-  int num_cores = rt::RuntimeMaxCores();
 
+  atomic64_write(&acc_hits, 0);
+  atomic64_write(&num_resp, 0);
   srand(time(NULL));
 
   ReadFreqTerms();
 
   PopulateIndex();
 
-  for (int i = 0; i < num_cores; ++i) {
+  for (int i = 0; i < NCPU; ++i) {
+    /*
+    Collection<IndexReaderPtr> readers = Collection<IndexReaderPtr>::newInstance(NDIR);
+    for (int j = 0; j < NDIR; ++j) {
+      readers[j] = IndexReader::open(dir[j], true);
+    }
+
+    MultiReaderPtr mreader = newLucene<MultiReader>(readers);
+    searchers[i] = newLucene<IndexSearcher>(mreader);
+    */
     searchers[i] = newLucene<IndexSearcher>(dir, true);
   }
 

@@ -8,6 +8,7 @@
 #define SYNCHRONIZE_H
 
 #include "cc/sync.h"
+#include "breakwater/sync++.h"
 #include "Lucene.h"
 
 namespace Lucene {
@@ -19,7 +20,7 @@ public:
     virtual ~Synchronize();
 
 protected:
-    rt::Mutex mutexSynchronize;
+    rpc::Mutex mutexSynchronize;
     int64_t lockThread;
     int32_t recursionCount;
 
@@ -38,7 +39,25 @@ public:
 
     /// Returns true if mutex is currently locked by current thread.
     bool holdsLock();
+
+    /// get Mutex queueing delay
+    uint64_t QueueUS();
+
+    bool isCongested();
 };
+
+template <class OBJECT>
+void checkQueueUS(OBJECT object, const char *str) {
+    uint64_t qus = object->getSync()->QueueUS();
+    if (qus > 5000) {
+        printf("[%s] congested: %lu us\n", str, qus);
+    }
+}
+
+template <class OBJECT>
+bool SyncIsCongested(OBJECT object) {
+    return object->getSync()->isCongested();
+}
 
 /// Utility class to support scope locking.
 class LPPAPI SyncLock {

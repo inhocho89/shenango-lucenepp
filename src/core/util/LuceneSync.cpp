@@ -36,6 +36,10 @@ bool LuceneSync::holdsLock() {
     return getSync()->holdsLock();
 }
 
+uint64_t LuceneSync::mutexQueueUS() {
+    return getSync()->QueueUS();
+}
+
 void LuceneSync::wait() {
     getSignal()->wait();
 }

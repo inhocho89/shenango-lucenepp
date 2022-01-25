@@ -19,12 +19,14 @@ Synchronize::~Synchronize() {
 }
 
 void Synchronize::createSync(SynchronizePtr& sync) {
-    static rt::Mutex lockMutex;
-    rt::ScopedLock<rt::Mutex> syncLock(&lockMutex);
+    static rpc::Mutex lockMutex;
+    //rt::ScopedLock<rpc::Mutex> syncLock(&lockMutex);
 
+    lockMutex.Lock();
     if (!sync) {
         sync = newInstance<Synchronize>();
     }
+    lockMutex.Unlock();
 }
 
 void Synchronize::lock() {
@@ -58,6 +60,14 @@ int32_t Synchronize::unlockAll() {
 
 bool Synchronize::holdsLock() {
     return (lockThread == LuceneThread::currentId() && recursionCount > 0);
+}
+
+uint64_t Synchronize::QueueUS() {
+    return mutexSynchronize.QueueUS();
+}
+
+bool Synchronize::isCongested() {
+    return mutexSynchronize.IsCongested();
 }
 
 SyncLock::SyncLock(const SynchronizePtr& sync) {
