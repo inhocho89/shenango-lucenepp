@@ -99,4 +99,8 @@ LuceneObjectPtr MMapIndexInput::clone(const LuceneObjectPtr& other) {
     return cloneIndexInput;
 }
 
+bool MMapIndexInput::isCongested() {
+    return false;
+}
+
 }

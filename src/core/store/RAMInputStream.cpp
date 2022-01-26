@@ -118,4 +118,8 @@ LuceneObjectPtr RAMInputStream::clone(const LuceneObjectPtr& other) {
     return cloneInputStream;
 }
 
+bool RAMInputStream::isCongested() {
+    return syncIsCongested(file);
+}
+
 }

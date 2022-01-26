@@ -211,4 +211,8 @@ void SkipBuffer::seek(int64_t pos) {
     this->pos = (int32_t)(pos - pointer);
 }
 
+bool SkipBuffer::isCongested() {
+    return false;
+}
+
 }

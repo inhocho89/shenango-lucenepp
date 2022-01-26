@@ -115,6 +115,8 @@ public:
 
     /// Sets current position in this file, where the next read will occur.
     virtual void seek(int64_t pos);
+
+    virtual bool isCongested();
 };
 
 }

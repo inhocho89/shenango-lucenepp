@@ -117,6 +117,9 @@ public:
 
     /// Read string map as a series of key/value pairs.
     virtual MapStringString readStringStringMap();
+
+    ///
+    virtual bool isCongested() = 0;
 };
 
 }

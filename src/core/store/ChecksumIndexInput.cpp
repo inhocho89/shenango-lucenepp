@@ -55,4 +55,8 @@ LuceneObjectPtr ChecksumIndexInput::clone(const LuceneObjectPtr& other) {
     return cloneIndexInput;
 }
 
+bool ChecksumIndexInput::isCongested() {
+    return false;
+}
+
 }

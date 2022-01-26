@@ -167,4 +167,8 @@ LuceneObjectPtr BufferedIndexInput::clone(const LuceneObjectPtr& other) {
     return cloneIndexInput;
 }
 
+bool BufferedIndexInput::isCongested() {
+    return false;
+}
+
 }

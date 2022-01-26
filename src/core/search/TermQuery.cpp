@@ -110,17 +110,7 @@ void TermWeight::normalize(double norm) {
 }
 
 ScorerPtr TermWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer) {
-    if (SyncIsCongested(reader)) {
-        struct srpc_ctx *ctx = (struct srpc_ctx *)get_rpc_ctx();
-	ctx->drop = true;
-	return nullptr;
-    }
     TermDocsPtr termDocs(reader->termDocs(query->term));
-    if (SyncIsCongested(reader)) {
-        struct srpc_ctx *ctx = (struct srpc_ctx *)get_rpc_ctx();
-	ctx->drop = true;
-	return nullptr;
-    }
     return termDocs ? newLucene<TermScorer>(shared_from_this(), termDocs, similarity, reader->norms(query->term->field())) : ScorerPtr();
 }
 

@@ -55,6 +55,8 @@ public:
 
     /// Not implemented
     virtual void close();
+
+    virtual bool isCongested();
 };
 
 }

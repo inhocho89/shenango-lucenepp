@@ -112,9 +112,7 @@ void IndexSearcher::search(const WeightPtr& weight, const FilterPtr& filter, con
             ScorerPtr scorer(weight->scorer(subReaders[i], !results->acceptsDocsOutOfOrder(), true));
             if (scorer) {
                 scorer->score(results);
-            } else {
-		return;
-	    }
+            }
         }
     } else {
         for (int32_t i = 0; i < subReaders.size(); ++i) { // search each subreader

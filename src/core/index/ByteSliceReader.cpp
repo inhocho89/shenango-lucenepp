@@ -139,4 +139,8 @@ void ByteSliceReader::close() {
     boost::throw_exception(RuntimeException(L"not implemented"));
 }
 
+bool ByteSliceReader::isCongested() {
+    return false;
+}
+
 }

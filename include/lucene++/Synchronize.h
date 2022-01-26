@@ -50,12 +50,12 @@ template <class OBJECT>
 void checkQueueUS(OBJECT object, const char *str) {
     uint64_t qus = object->getSync()->QueueUS();
     if (qus > 5000) {
-        printf("[%s] congested: %lu us\n", str, qus);
+        printf("[%s] congested (%p): %lu us\n", str, object, qus);
     }
 }
 
 template <class OBJECT>
-bool SyncIsCongested(OBJECT object) {
+bool syncIsCongested(OBJECT object) {
     return object->getSync()->isCongested();
 }
 

@@ -56,6 +56,8 @@ public:
 
     /// Returns a clone of this stream.
     virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+
+    virtual bool isCongested();
 };
 
 }
