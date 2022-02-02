@@ -202,6 +202,10 @@ bool FilterTermDocs::skipTo(int32_t target) {
     return in->skipTo(target);
 }
 
+bool FilterTermDocs::isCongested() {
+    return false;
+}
+
 void FilterTermDocs::close() {
     in->close();
 }

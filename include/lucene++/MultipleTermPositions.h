@@ -32,6 +32,7 @@ public:
     virtual bool skipTo(int32_t target);
     virtual int32_t doc();
     virtual int32_t freq();
+    virtual bool isCongested();
     virtual void close();
 
     /// Not implemented.

@@ -155,4 +155,12 @@ void RAMDirectory::close() {
     fileMap.reset();
 }
 
+bool RAMDirectory::isCongested() {
+    SyncLock syncLock(this);
+    for (MapStringRAMFile::iterator fileName = fileMap.begin(); fileName != fileMap.end(); ++fileName) {
+	if (syncIsCongested(fileName->second)) return true;
+    }
+    return false;
+}
+
 }

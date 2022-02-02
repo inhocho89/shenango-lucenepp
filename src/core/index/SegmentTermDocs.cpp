@@ -88,6 +88,10 @@ void SegmentTermDocs::seek(const TermInfoPtr& ti, const TermPtr& term) {
     }
 }
 
+bool SegmentTermDocs::isCongested() {
+    return _freqStream->isCongested();
+}
+
 void SegmentTermDocs::close() {
     _freqStream->close();
     if (skipListReader) {

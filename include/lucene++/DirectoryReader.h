@@ -267,6 +267,8 @@ public:
     /// Skips entries to the first beyond the current whose document number is greater than or equal to target.
     virtual bool skipTo(int32_t target);
 
+    virtual bool isCongested();
+
     /// Frees associated resources.
     virtual void close();
 

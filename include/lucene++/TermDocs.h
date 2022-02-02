@@ -52,6 +52,8 @@ public:
 
     /// Frees associated resources.
     virtual void close() = 0;
+
+    virtual bool isCongested() = 0;
 };
 
 }

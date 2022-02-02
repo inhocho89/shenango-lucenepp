@@ -79,6 +79,8 @@ public:
 
     /// Closes the store.
     virtual void close();
+
+    virtual bool isCongested();
 };
 
 }

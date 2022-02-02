@@ -583,6 +583,10 @@ bool MemoryIndexTermPositions::skipTo(int32_t target) {
     return next();
 }
 
+bool MemoryIndexTermPositions::isCongested() {
+    return false;
+}
+
 void MemoryIndexTermPositions::close() {
 }
 

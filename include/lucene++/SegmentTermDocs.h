@@ -49,6 +49,8 @@ public:
 
     virtual void seek(const TermInfoPtr& ti, const TermPtr& term);
 
+    virtual bool isCongested();
+
     virtual void close();
 
     /// Returns the current document number.

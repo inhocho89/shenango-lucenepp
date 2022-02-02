@@ -95,6 +95,7 @@ public:
     virtual bool next();
     virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
     virtual bool skipTo(int32_t target);
+    virtual bool isCongested();
     virtual void close();
 };
 

@@ -496,6 +496,10 @@ bool ParallelTermDocs::skipTo(int32_t target) {
     return termDocs ? termDocs->skipTo(target) : false;
 }
 
+bool ParallelTermDocs::isCongested() {
+    return false;
+}
+
 void ParallelTermDocs::close() {
     if (termDocs) {
         termDocs->close();

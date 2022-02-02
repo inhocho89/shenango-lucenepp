@@ -66,6 +66,10 @@ bool AbstractAllTermDocs::skipTo(int32_t target) {
     return false;
 }
 
+bool AbstractAllTermDocs::isCongested() {
+    return false;
+}
+
 void AbstractAllTermDocs::close() {
 }
 

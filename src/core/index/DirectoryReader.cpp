@@ -1055,6 +1055,10 @@ TermDocsPtr MultiTermDocs::termDocs(const IndexReaderPtr& reader) {
     return term ? reader->termDocs() : reader->termDocs(TermPtr());
 }
 
+bool MultiTermDocs::isCongested() {
+    return false;
+}
+
 void MultiTermDocs::close() {
     for (Collection<TermDocsPtr>::iterator termDoc = readerTermDocs.begin(); termDoc != readerTermDocs.end(); ++termDoc) {
         if (*termDoc) {

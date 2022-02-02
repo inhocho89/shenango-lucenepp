@@ -84,6 +84,10 @@ int32_t MultipleTermPositions::freq() {
     return _freq;
 }
 
+bool MultipleTermPositions::isCongested() {
+    return false;
+}
+
 void MultipleTermPositions::close() {
     while (!termPositionsQueue->empty()) {
         termPositionsQueue->pop()->close();
