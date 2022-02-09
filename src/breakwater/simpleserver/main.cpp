@@ -48,7 +48,7 @@ constexpr uint64_t numDocs = 1000000;
 constexpr uint64_t numWarmUpSamples = 10;
 constexpr uint64_t numSamples = 1;
 constexpr uint64_t NORM = 100;
-constexpr int searchN = 1000;
+constexpr int searchN = 100;
 
 atomic64_t acc_hits;
 atomic64_t num_resp;
@@ -60,6 +60,7 @@ std::vector<uint64_t> frequencies;
 uint64_t weight_sum;
 RAMDirectoryPtr dir;
 
+static IndexReaderPtr readers[NCPU];
 static IndexSearcherPtr searchers[NCPU];
 
 struct payload {
@@ -247,14 +248,19 @@ void RequestHandler(struct srpc_ctx *ctx) {
   const payload *in = reinterpret_cast<const payload *>(ctx->req_buf);
   int core_id = get_current_affinity();
 
-  // Perform work
-  QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"contents", terms[ntoh64(in->term_index)]));
-  Collection<ScoreDocPtr> hits = searchers[core_id]->search(query, FilterPtr(), searchN)->scoreDocs;
+  /*if (dir->isCongested()) {
+    ctx->drop = true;
+  } else {*/
+    // Perform work
+    QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"contents", terms[ntoh64(in->term_index)]));
+    TopDocsPtr result = searchers[core_id]->search(query, FilterPtr(), searchN);
+    Collection<ScoreDocPtr> hits = result->scoreDocs;
+  //}
 
-  if (!ctx->drop) {
+  /*if (!ctx->drop) {
     atomic64_fetch_and_add(&acc_hits, hits.size());
     atomic64_inc(&num_resp);
-  }
+  }*/
 
   ctx->resp_len = sizeof(payload);
   payload *out = reinterpret_cast<payload *>(ctx->resp_buf);
@@ -262,6 +268,7 @@ void RequestHandler(struct srpc_ctx *ctx) {
 }
 
 void MainHandler(void *arg) {
+  uint64_t start = microtime();
   rt::Thread([] { RPCSStatServer(); }).Detach();
 
   atomic64_write(&acc_hits, 0);
@@ -282,10 +289,12 @@ void MainHandler(void *arg) {
     MultiReaderPtr mreader = newLucene<MultiReader>(readers);
     searchers[i] = newLucene<IndexSearcher>(mreader);
     */
-    searchers[i] = newLucene<IndexSearcher>(dir, true);
+    readers[i] = IndexReader::open(dir, true);
+    searchers[i] = newLucene<IndexSearcher>(readers[i]);
   }
 
-  printf("Ready to run the server...\n");
+  uint64_t finish = microtime();
+  printf("Ready to run the server... %lf s\n", (finish - start) / 1000000.0);
   int ret = rpc::RpcServerEnable(RequestHandler);
   if (ret) panic("couldn't enable RPC server");
 

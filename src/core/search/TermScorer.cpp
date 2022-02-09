@@ -40,16 +40,30 @@ const Collection<double> TermScorer::SIM_NORM_DECODER() {
 }
 
 void TermScorer::score(const CollectorPtr& collector) {
+// hoover
+    /*struct srpc_ctx *ctx = (struct srpc_ctx *)get_rpc_ctx();
+    if (termDocs->isCongested()) {
+        ctx->drop = true;
+	return;
+    }*/
     score(collector, INT_MAX, nextDoc());
 }
 
 bool TermScorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID) {
+    struct srpc_ctx *ctx = (struct srpc_ctx *)get_rpc_ctx();
     // firstDocID is ignored since nextDoc() sets 'doc'
     collector->setScorer(shared_from_this());
     while (doc < max) { // for docs in window
         collector->collect(doc);
-
         if (++pointer >= pointerMax) {
+	    // hoover
+            if (termDocs->isCongested()) {
+                termDocs->close();
+	        pointerMax = 0;
+	        doc = INT_MAX;
+                ctx->drop = true;
+	        return false;
+	    }
             pointerMax = termDocs->read(docs, freqs); // refill buffers
             if (pointerMax != 0) {
                 pointer = 0;
@@ -72,6 +86,15 @@ int32_t TermScorer::docID() {
 int32_t TermScorer::nextDoc() {
     ++pointer;
     if (pointer >= pointerMax) {
+        // hoover
+        if (termDocs->isCongested()) {
+            struct srpc_ctx *ctx = (struct srpc_ctx *)get_rpc_ctx();
+	    ctx->drop = true;
+	    pointerMax = 0;
+	    termDocs->close();
+	    doc = NO_MORE_DOCS;
+	    return doc;
+	}
         pointerMax = termDocs->read(docs, freqs); // refill buffer
         if (pointerMax != 0) {
             pointer = 0;

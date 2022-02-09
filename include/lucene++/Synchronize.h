@@ -59,6 +59,11 @@ bool syncIsCongested(OBJECT object) {
     return object->getSync()->isCongested();
 }
 
+template <class OBJECT>
+uint64_t syncQueueUS(OBJECT object) {
+    return object->getSync()->QueueUS();
+}
+
 /// Utility class to support scope locking.
 class LPPAPI SyncLock {
 public:
