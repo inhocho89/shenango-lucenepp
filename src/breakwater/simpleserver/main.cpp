@@ -48,7 +48,7 @@ constexpr uint64_t numDocs = 1000000;
 constexpr uint64_t numWarmUpSamples = 10;
 constexpr uint64_t numSamples = 1;
 constexpr uint64_t NORM = 100;
-constexpr int searchN = 1000;
+constexpr int searchN = 100;
 
 std::vector<String> terms;
 std::vector<uint64_t> frequencies;
@@ -138,7 +138,7 @@ String ChooseTerm(uint64_t hash) {
 
 DocumentPtr createDocument(const String& contents) {
   DocumentPtr document = newLucene<Document>();
-  document->add(newLucene<Field>(L"contents", contents, Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+  document->add(newLucene<Field>(L"contents", contents, Field::STORE_YES, Field::INDEX_ANALYZED));
   return document;
 }
 
@@ -148,7 +148,7 @@ void PopulateIndex() {
   int num_docs = 0;
   dir = newLucene<RAMDirectory>();
 
-  IndexWriterPtr indexWriter = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true,
+  IndexWriterPtr indexWriter = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true,
                                                       IndexWriter::MaxFieldLengthLIMITED);
 
   std::string line;
